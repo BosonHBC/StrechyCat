@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "SCCharacterBase.generated.h"
 
+
 UCLASS()
 class STRETCHYCAT_API ASCCharacterBase : public ACharacter
 {
@@ -18,6 +19,17 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	/** Top down camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* TopDownCameraComponent;
+
+	/** Camera boom positioning the camera above the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* CameraBoom;
+
+	void MoveForward(float _value);
+	void MoveRight(float _value);
 
 public:	
 	// Called every frame
