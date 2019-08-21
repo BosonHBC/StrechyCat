@@ -17,6 +17,18 @@ void AStretchyCatPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
+		FHitResult OutHit(ForceInit);
+		GetHitResultUnderCursor(ECC_Visibility, false, OutHit);
+		if (OutHit.GetActor() != nullptr) {
+			FVector norm = OutHit.ImpactPoint - GetPawn()->GetActorLocation();
+			norm.Normalize();
+			FRotator newLookAt = FRotationMatrix::MakeFromX(norm).Rotator();
+			newLookAt.Pitch = 0;
+			newLookAt.Roll = 0;
+			FRotator NewRot = FMath::RInterpTo(GetControlRotation(), newLookAt, DeltaTime, 8);
+			SetControlRotation(NewRot);
+		}
+	
 }
 
 void AStretchyCatPlayerController::SetupInputComponent()

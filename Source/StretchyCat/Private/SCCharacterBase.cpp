@@ -4,6 +4,9 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "StretchyCatPlayerController.h"
+#include "DrawDebugHelpers.h"
+#include "Engine/World.h"
 
 // Sets default values
 ASCCharacterBase::ASCCharacterBase()
@@ -12,9 +15,9 @@ ASCCharacterBase::ASCCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Don't rotate character to camera direction
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
+	bUseControllerRotationPitch = true;
+	bUseControllerRotationYaw = true;
+	bUseControllerRotationRoll = true;
 
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate character to moving direction
@@ -68,6 +71,9 @@ void ASCCharacterBase::Jump()
 void ASCCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+
+
 
 }
 
