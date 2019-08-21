@@ -1,0 +1,40 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "SCCharacterBase.h"
+#include "SCStretchyCat.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class STRETCHYCAT_API ASCStretchyCat : public ASCCharacterBase
+{
+	GENERATED_BODY()
+public:
+	// Default Constructor
+	ASCStretchyCat();
+
+protected:
+	void UseAbility() override;
+	void UnUseAbility() override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+		class UCapsuleComponent* ExtendBodyCapComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+		float MaxForwardExtendDistance;
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+		float BodyShootSpeed;
+
+private:
+	FVector BodyLandedLcation;
+	bool bBodyOutside;
+
+public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+};

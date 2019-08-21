@@ -8,6 +8,7 @@
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
 
+
 // Sets default values
 ASCCharacterBase::ASCCharacterBase()
 {
@@ -38,8 +39,6 @@ ASCCharacterBase::ASCCharacterBase()
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	
-
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +46,18 @@ void ASCCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void ASCCharacterBase::UseAbility()
+{
+	// Base Ability
+
+}
+
+void ASCCharacterBase::UnUseAbility()
+{
+	// Base release ability
+
 }
 
 void ASCCharacterBase::MoveForward(float _value)
@@ -71,9 +82,6 @@ void ASCCharacterBase::Jump()
 void ASCCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-
-
 
 }
 
@@ -84,6 +92,9 @@ void ASCCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// SetupInput
 	PlayerInputComponent->BindAxis("MoveForward", this, &ASCCharacterBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ASCCharacterBase::MoveRight);
+	
+	PlayerInputComponent->BindAction("Ability", IE_Pressed, this, &ASCCharacterBase::UseAbility);
+	PlayerInputComponent->BindAction("Ability", IE_Released, this, &ASCCharacterBase::UnUseAbility);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCCharacterBase::Jump);
 }

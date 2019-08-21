@@ -28,6 +28,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
 
+	virtual void UseAbility();
+	virtual void UnUseAbility();
 	void MoveForward(float _value);
 	void MoveRight(float _value);
 	void Jump();
