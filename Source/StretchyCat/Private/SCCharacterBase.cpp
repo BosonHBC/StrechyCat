@@ -48,13 +48,20 @@ void ASCCharacterBase::BeginPlay()
 
 void ASCCharacterBase::MoveForward(float _value)
 {
+	AddMovementInput(FVector::ForwardVector * _value);
 
-//	AddMovementInput(Direction, _value);
 }
 
 void ASCCharacterBase::MoveRight(float _value)
 {
+	AddMovementInput(FVector::RightVector * _value);
 
+}
+
+void ASCCharacterBase::Jump()
+{
+	// parent character Jump function;
+	Super::Jump();
 }
 
 // Called every frame
@@ -71,5 +78,7 @@ void ASCCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// SetupInput
 	PlayerInputComponent->BindAxis("MoveForward", this, &ASCCharacterBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ASCCharacterBase::MoveRight);
+
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCCharacterBase::Jump);
 }
 
