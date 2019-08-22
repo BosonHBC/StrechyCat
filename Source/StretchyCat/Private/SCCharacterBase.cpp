@@ -10,6 +10,7 @@
 #include "SCGameState.h"
 #include "Components/SceneComponent.h"
 #include "SCInteractableBase.h"
+#include "StretchyCatGameMode.h"
 
 // Sets default values
 ASCCharacterBase::ASCCharacterBase()
@@ -86,8 +87,11 @@ void ASCCharacterBase::Jump()
 
 void ASCCharacterBase::TakeDamage(int _dmg)
 {
-	ASCGameState* scGS = GetWorld()->GetGameState<ASCGameState>();
-	scGS->GetDamage(_dmg);
+	if (Role == ROLE_Authority)
+	{
+		AStretchyCatGameMode * scGM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
+		scGM->GetDamage(_dmg);
+	}
 }
 
 
