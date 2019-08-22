@@ -3,6 +3,7 @@
 #include "SCStretchyCat.h"
 #include"Components/CapsuleComponent.h"
 #include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
+#include "DrawDebugHelpers.h"
 ASCStretchyCat::ASCStretchyCat() {
 
 	// Create Extend body
@@ -26,8 +27,9 @@ void ASCStretchyCat::UseAbility()
 	float RelativeXLocation = MaxForwardExtendDistance;
 	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, Start + Direction * MaxForwardExtendDistance, ECC_Visibility, CollisionParams)) {
 		RelativeXLocation = FMath::Min((OutHit.ImpactPoint - Start).Size(), RelativeXLocation);
+		DrawDebugLine(GetWorld(), Start, Start + Direction * RelativeXLocation, FColor::Red, true);
 	}
-
+	bBodyOutside = true;
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = this;
 	UKismetSystemLibrary::MoveComponentTo(ExtendBodyCapComp, FVector(RelativeXLocation, 0, 0), FRotator(0.0f, 0.0f, 0.0f), true, false, RelativeXLocation / BodyShootSpeed, false, EMoveComponentAction::Type::Move, LatentInfo);
@@ -43,8 +45,13 @@ void ASCStretchyCat::UnUseAbility()
 
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = this;
-	UKismetSystemLibrary::MoveComponentTo(ExtendBodyCapComp, FVector(0, 0, 0), FRotator(0.0f, 0.0f, 0.0f), true, false, 2 * RelativeXLocation / BodyShootSpeed, false, EMoveComponentAction::Type::Move, LatentInfo);
+	LatentInfo.ExecutionFunction = "OnBodyBackTOBody";
+	UKismetSystemLibrary::MoveComponentTo(ExtendBodyCapComp, FVector(0, 0, 0), FRotator(0.0f, 0.0f, 0.0f), false, false, 2 * RelativeXLocation / BodyShootSpeed, false, EMoveComponentAction::Type::Move, LatentInfo);
 
+}
+
+void ASCStretchyCat::OnBodyBackTOBody() {
+	UE_LOG(LogTemp, Log, TEXT("Body Back!"));
 }
 
 void ASCStretchyCat::Tick(float DeltaTime)
