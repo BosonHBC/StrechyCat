@@ -23,8 +23,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable)
 	virtual void DoInteraction(class ASCCharacterBase* ownActor );
-	UFUNCTION(BlueprintCallable)
+
 	virtual void CancelInteraction();
 };

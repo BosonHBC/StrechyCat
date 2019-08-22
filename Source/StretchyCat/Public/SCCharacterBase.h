@@ -42,14 +42,15 @@ protected:
 	virtual void Interact();
 
 	UPROPERTY(VisibleAnywhere, Category = "Gameplay")
-	class ASCInteractableBase* InteractingActor;
+		class ASCInteractableBase* InteractingActor;
 
 	bool bInteracting;
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	USceneComponent* GetInteractionPoint() const { return InteractionPoint; };
 };
