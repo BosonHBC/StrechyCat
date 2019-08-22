@@ -28,11 +28,19 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
 
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		class USceneComponent* InteractionPoint;
+
 	virtual void UseAbility();
 	virtual void UnUseAbility();
 	void MoveForward(float _value);
 	void MoveRight(float _value);
 	void Jump();
+
+	virtual void TakeDamage(int _dmg);
+
+	virtual void Interact();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

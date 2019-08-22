@@ -20,6 +20,7 @@ public:
 protected:
 	void UseAbility() override;
 	void UnUseAbility() override;
+	void Interact() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 		class UCapsuleComponent* ExtendBodyCapComp;
@@ -28,6 +29,8 @@ protected:
 		float MaxForwardExtendDistance;
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 		float BodyShootSpeed;
+
+	
 
 private:
 	FVector BodyLandedLcation;

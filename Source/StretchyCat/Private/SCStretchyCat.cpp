@@ -45,8 +45,13 @@ void ASCStretchyCat::UnUseAbility()
 
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = this;
-	LatentInfo.ExecutionFunction = "OnBodyBackTOBody";
 	UKismetSystemLibrary::MoveComponentTo(ExtendBodyCapComp, FVector(0, 0, 0), FRotator(0.0f, 0.0f, 0.0f), false, false, 2 * RelativeXLocation / BodyShootSpeed, false, EMoveComponentAction::Type::Move, LatentInfo);
+
+}
+
+void ASCStretchyCat::Interact()
+{
+	Super::Interact();
 
 }
 

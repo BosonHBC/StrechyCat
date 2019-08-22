@@ -7,6 +7,8 @@
 #include "StretchyCatPlayerController.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
+#include "SCGameState.h"
+#include "Components/SceneComponent.h"
 
 
 // Sets default values
@@ -38,6 +40,8 @@ ASCCharacterBase::ASCCharacterBase()
 	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	InteractionPoint = CreateDefaultSubobject<USceneComponent>(TEXT("InteractPoint"));
 
 	SetReplicates(true);
 	SetReplicateMovement(true);
@@ -80,6 +84,18 @@ void ASCCharacterBase::Jump()
 	Super::Jump();
 }
 
+void ASCCharacterBase::TakeDamage(int _dmg)
+{
+	ASCGameState* scGS = GetWorld()->GetGameState<ASCGameState>();
+	scGS->GetDamage(_dmg);
+}
+
+
+void ASCCharacterBase::Interact()
+{
+	// Base Interact
+}
+
 // Called every frame
 void ASCCharacterBase::Tick(float DeltaTime)
 {
@@ -99,5 +115,7 @@ void ASCCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Ability", IE_Released, this, &ASCCharacterBase::UnUseAbility);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCCharacterBase::Jump);
+
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ASCCharacterBase::Interact);
 }
 
