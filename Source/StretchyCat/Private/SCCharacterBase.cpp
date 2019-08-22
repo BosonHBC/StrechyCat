@@ -118,15 +118,16 @@ void ASCCharacterBase::Tick(float DeltaTime)
 	FCollisionQueryParams CollisionParams;
 
 	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, Start + Direction * 80.f, ECC_Visibility, CollisionParams)) {
-		DrawDebugLine(GetWorld(), Start, OutHit.Actor->GetActorLocation(), FColor::Blue, true);
+		DrawDebugLine(GetWorld(), Start, OutHit.GetActor()->GetActorLocation(), FColor::Blue, true);
 
-		ASCInteractableBase* baseInteractable = Cast<ASCInteractableBase>(OutHit.Actor);
+		ASCInteractableBase* baseInteractable = Cast<ASCInteractableBase>(OutHit.GetActor());
 		if (baseInteractable != nullptr) {
 			InteractingActor = baseInteractable;
 		}
 	}
-	if (!bInteracting) {
-		InteractingActor = nullptr;
+	else {
+		if (!bInteracting)
+			InteractingActor = nullptr;
 	}
 }
 
