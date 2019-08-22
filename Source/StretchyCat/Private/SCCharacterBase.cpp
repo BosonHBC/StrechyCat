@@ -9,12 +9,12 @@
 #include "Engine/World.h"
 #include "SCGameState.h"
 #include "Components/SceneComponent.h"
-
+#include "SCInteractableBase.h"
 
 // Sets default values
 ASCCharacterBase::ASCCharacterBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Don't rotate character to camera direction
@@ -42,7 +42,7 @@ ASCCharacterBase::ASCCharacterBase()
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	InteractionPoint = CreateDefaultSubobject<USceneComponent>(TEXT("InteractPoint"));
-
+	bInteracting = false;
 	SetReplicates(true);
 	SetReplicateMovement(true);
 }
@@ -51,7 +51,7 @@ ASCCharacterBase::ASCCharacterBase()
 void ASCCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 void ASCCharacterBase::UseAbility()
@@ -94,6 +94,16 @@ void ASCCharacterBase::TakeDamage(int _dmg)
 void ASCCharacterBase::Interact()
 {
 	// Base Interact
+	if (!bInteracting && InteractingActor != nullptr) {
+		bInteracting = true;
+		InteractingActor->DoInteraction(this);
+	}
+	else if (bInteracting && InteractingActor != nullptr) {
+		bInteracting = false;
+		InteractingActor->CancelInteraction();
+	}
+
+	//DrawDebugLine(GetWorld(), InteractionPoint->GetComponentLocation(), InteractionPoint->GetComponentLocation() + InteractionPoint->GetForwardVector() * 80.f, FColor::Blue, true);
 }
 
 // Called every frame
@@ -101,6 +111,23 @@ void ASCCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
+	FHitResult OutHit;
+	FVector Start = InteractionPoint->GetComponentLocation();
+	FVector Direction = InteractionPoint->GetForwardVector();
+	FCollisionQueryParams CollisionParams;
+
+	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, Start + Direction * 80.f, ECC_Visibility, CollisionParams)) {
+		DrawDebugLine(GetWorld(), Start, OutHit.Actor->GetActorLocation(), FColor::Blue, true);
+
+		ASCInteractableBase* baseInteractable = Cast<ASCInteractableBase>(OutHit.Actor);
+		if (baseInteractable != nullptr) {
+			InteractingActor = baseInteractable;
+		}
+	}
+	if (!bInteracting) {
+		InteractingActor = nullptr;
+	}
 }
 
 // Called to bind functionality to input
@@ -110,7 +137,7 @@ void ASCCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// SetupInput
 	PlayerInputComponent->BindAxis("MoveForward", this, &ASCCharacterBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ASCCharacterBase::MoveRight);
-	
+
 	PlayerInputComponent->BindAction("Ability", IE_Pressed, this, &ASCCharacterBase::UseAbility);
 	PlayerInputComponent->BindAction("Ability", IE_Released, this, &ASCCharacterBase::UnUseAbility);
 

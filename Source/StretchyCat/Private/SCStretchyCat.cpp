@@ -14,12 +14,16 @@ ASCStretchyCat::ASCStretchyCat() {
 	// Gameplay
 	MaxForwardExtendDistance = 250.f;
 	BodyShootSpeed = MaxForwardExtendDistance / 0.5f;
+
+	// Override 
+	ExtendBodyCapComp->SetRelativeLocation(FVector(0, 0, -30));
+	InteractionPoint->SetupAttachment(ExtendBodyCapComp);
+	InteractionPoint->SetRelativeLocation(FVector(40.f,0,0));
 }
 
 void ASCStretchyCat::UseAbility()
 {
 	Super::UseAbility();
-	UE_LOG(LogTemp, Log, TEXT("Using Ability"));
 	FHitResult OutHit;
 	FVector Start = ExtendBodyCapComp->GetComponentLocation();
 	FVector Direction = ExtendBodyCapComp->GetForwardVector();

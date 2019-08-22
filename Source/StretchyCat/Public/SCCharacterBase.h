@@ -41,6 +41,10 @@ protected:
 
 	virtual void Interact();
 
+	UPROPERTY(VisibleAnywhere, Category = "Gameplay")
+	class ASCInteractableBase* InteractingActor;
+
+	bool bInteracting;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
