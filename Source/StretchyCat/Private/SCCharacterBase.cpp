@@ -41,6 +41,7 @@ ASCCharacterBase::ASCCharacterBase()
 	InteractionPoint = CreateDefaultSubobject<USceneComponent>(TEXT("InteractPoint"));
 	bInteracting = false;
 
+
 	SetReplicates(true);
 	SetReplicateMovement(true);
 }

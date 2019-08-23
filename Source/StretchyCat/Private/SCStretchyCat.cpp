@@ -6,6 +6,8 @@
 #include "DrawDebugHelpers.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+
 ASCStretchyCat::ASCStretchyCat() {
 
 	// Create Extend body
@@ -29,6 +31,7 @@ ASCStretchyCat::ASCStretchyCat() {
 	CollisionParams.AddIgnoredComponent(ExtendBodyComp);
 	CollisionParams.AddIgnoredComponent(ExtendBodyCapComp);
 
+	PercentToEnd = 0;
 }
 
 void ASCStretchyCat::UseAbility()
@@ -79,18 +82,22 @@ void ASCStretchyCat::Tick(float DeltaTime)
 	DrawDebugSphere(GetWorld(), InteractionPoint->GetComponentLocation(), 16, 8, FColor::Blue);
 	if (bBodyOutside) {
 		FVector RelativeLoc = ExtendBodyCapComp->RelativeLocation;
+		PercentToEnd = 1 - (MaxForwardExtendDistance - ExtendBodyCapComp->RelativeLocation.X) / MaxForwardExtendDistance;
 		RelativeLoc.X = (GetCapsuleComponent()->GetUnscaledCapsuleRadius() + ExtendBodyCapComp->RelativeLocation.X) / 2.f;
 		ExtendBodyComp->SetRelativeLocation(RelativeLoc);
 		FVector NewExtent((ExtendBodyCapComp->RelativeLocation.X - GetCapsuleComponent()->GetUnscaledCapsuleRadius()) / 2, 25.f, 25.f);
 		ExtendBodyComp->SetBoxExtent(NewExtent);
 		DrawDebugBox(GetWorld(), ExtendBodyComp->GetComponentLocation(), NewExtent, ExtendBodyComp->GetComponentRotation().Quaternion(),FColor::Yellow);
 
+
+
 		if (ExtendBodyCapComp->RelativeLocation.X <= 0.01f) {
 			bBodyOutside = false;
 			ExtendBodyCapComp->SetRelativeLocation(FVector(0, 0, -30));
 		}
-	}
-	UE_LOG(LogTemp, Log, TEXT("Relative Rot: %f, %f, %f"), ExtendBodyComp->GetComponentRotation().Roll, ExtendBodyComp->GetComponentRotation().Pitch, ExtendBodyComp->GetComponentRotation().Yaw);
 
+		
+	}
+	UE_LOG(LogTemp, Log, TEXT("Percent: %f"), PercentToEnd);
 
 }

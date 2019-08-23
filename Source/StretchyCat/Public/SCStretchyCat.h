@@ -37,10 +37,13 @@ private:
 	FVector BodyLandedLcation;
 	bool bBodyOutside;
 
+
 	void OnBodyBackTOBody();
 
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
+		float PercentToEnd;
 };
