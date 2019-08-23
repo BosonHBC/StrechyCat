@@ -15,6 +15,11 @@ class STRETCHYCAT_API ASCSpinTurtle : public ASCCharacterBase
 	GENERATED_BODY()
 public:
 	ASCSpinTurtle();
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components)
+		class URotatingMovementComponent* RotateMovementComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components)
+		class USceneComponent* RotateParentComp;
+
 
 protected:
 	void UseAbility() override;
