@@ -20,6 +20,7 @@ void AStretchyCatGameMode::PostLogin(APlayerController* NewPlayer)
 	playerState->SetMaxLife(MaxSharedLife);
 	playerState->SetCurrentLife(MaxSharedLife);
 
+	IncGoalObjectiveCount();
 	UE_LOG(LogTemp, Warning, TEXT("PostLogin: %d"), playerState->GetMaxHealth());
 }
 

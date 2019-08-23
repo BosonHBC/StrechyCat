@@ -7,6 +7,8 @@
 #include "Net/UnrealNetwork.h"
 ASCGameState::ASCGameState()
 {
+	CurrentObjective = 0;
+	ObjectiveGoal = 0;
 }
 
 

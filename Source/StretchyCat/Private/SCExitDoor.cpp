@@ -52,3 +52,17 @@ void ASCExitDoor::NotifyActorBeginOverlap(AActor * OtherActor)
 	}
 }
 
+void ASCExitDoor::NotifyActorEndOverlap(AActor * OtherActor)
+{
+	Super::NotifyActorEndOverlap(OtherActor);
+	ASCCharacterBase * overlappingCharacter = Cast<ASCCharacterBase>(OtherActor);
+	if (overlappingCharacter && Role == ROLE_Authority)
+	{
+		AStretchyCatGameMode * scGM = Cast<AStretchyCatGameMode>(GetWorld()->GetAuthGameMode());
+		if (scGM)
+		{
+			scGM->DecCurrentObjectiveCount();
+		}
+	}
+}
+
