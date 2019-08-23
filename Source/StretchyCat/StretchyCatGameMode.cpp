@@ -55,3 +55,28 @@ void AStretchyCatGameMode::InitHealth()
 	auto GS = GetGameState<ASCGameState>();
 	GS->ChangeLifeCount(CurrentSharedLife, MaxSharedLife);
 }
+
+void AStretchyCatGameMode::IncCurrentObjectiveCount()
+{
+	ASCGameState * scGS = GetGameState<ASCGameState>();
+	scGS->SetGameObjective(scGS->GetCurrentObjective() + 1, scGS->GetGoalObjective());
+}
+
+void AStretchyCatGameMode::IncGoalObjectiveCount()
+{
+	ASCGameState * scGS = GetGameState<ASCGameState>();
+	scGS->SetGameObjective(scGS->GetCurrentObjective(), scGS->GetGoalObjective() + 1);
+}
+
+void AStretchyCatGameMode::DecCurrentObjectiveCount()
+{
+	ASCGameState * scGS = GetGameState<ASCGameState>();
+	scGS->SetGameObjective(scGS->GetCurrentObjective() - 1, scGS->GetGoalObjective());
+}
+
+void AStretchyCatGameMode::DecGoalObjectiveCount()
+{
+	ASCGameState * scGS = GetGameState<ASCGameState>();
+	scGS->SetGameObjective(scGS->GetCurrentObjective(), scGS->GetGoalObjective() - 1);
+}
+

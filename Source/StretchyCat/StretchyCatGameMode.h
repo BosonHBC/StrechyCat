@@ -22,6 +22,11 @@ public:
 
 	void GetDamage(int _dmg);
 	void InitHealth();
+
+	void IncCurrentObjectiveCount();
+	void IncGoalObjectiveCount();
+	void DecCurrentObjectiveCount();
+	void DecGoalObjectiveCount();
 };
 
 
