@@ -32,17 +32,22 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		class UBoxComponent* ExtendBodyComp;
 	
-
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+		float BaseImpulse;
 private:
 	FVector BodyLandedLcation;
 	bool bBodyOutside;
 
-
-	void OnBodyBackTOBody();
-
+	AActor* HeadHitActor;
+	FVector HeadHitPoint;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable, Category = "LateFunction")
+		void OnBodyBackToBody();
+	UFUNCTION(BlueprintCallable, Category = "LateFunction")
+		void OnBodyReachDest();
 
 	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
 		float PercentToEnd;

@@ -14,6 +14,8 @@ class STRETCHYCAT_API ASCInteractableBase : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ASCInteractableBase();
+	UPROPERTY(VisibleAnywhere, Category = "Componetns")
+		class UStaticMeshComponent* SuperMesh;
 
 protected:
 	// Called when the game starts or when spawned

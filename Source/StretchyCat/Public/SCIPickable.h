@@ -19,10 +19,7 @@ public:
 
 protected:
 
-	UPROPERTY(VisibleAnywhere, Category = "Componetns")
-		class UBoxComponent* BoxComp;
-	UPROPERTY(VisibleAnywhere, Category = "Componetns")
-		UStaticMeshComponent* SuperMesh;
+
 
 
 	class USceneComponent* PickPointSceneComp;
