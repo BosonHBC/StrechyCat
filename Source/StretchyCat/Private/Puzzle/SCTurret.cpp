@@ -47,7 +47,6 @@ void ASCTurret::FireProjetile()
 
 		// spawn the projectile at the muzzle
 		World->SpawnActor<ASCBulletProjectile>(ProjectileClass, SpawnLocation, SpawnLocationComp->GetComponentRotation(), ActorSpawnParams);
-
 	}
 
 }
