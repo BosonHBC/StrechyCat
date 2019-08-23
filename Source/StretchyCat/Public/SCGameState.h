@@ -17,15 +17,16 @@ public:
 	ASCGameState();
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
-		uint16 MaxSharedLife;
+		int MaxSharedLife;
 	UPROPERTY(VisibleAnywhere, Category = "Gameplay")
-		uint16 CurrentSharedLife;
+		int CurrentSharedLife;
 public:
 
 	int GetCurrentLife() const { return CurrentSharedLife; }
 
-	void GetDamage(uint16 _dmg);
-
 	UFUNCTION(BlueprintImplementableEvent, Category = "GameLoop")
 	void GameOver(bool _success);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void ChangeLifeCount(int cur_health, int max_health);
 };

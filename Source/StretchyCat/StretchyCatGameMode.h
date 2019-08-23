@@ -10,9 +10,18 @@ UCLASS(minimalapi)
 class AStretchyCatGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-
+protected:
+	virtual void BeginPlay() override;
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+		int MaxSharedLife;
+	UPROPERTY(VisibleAnywhere, Category = "Gameplay")
+		int CurrentSharedLife;
 public:
 	AStretchyCatGameMode();
+
+	void GetDamage(int _dmg);
+	void InitHealth();
 };
 
 

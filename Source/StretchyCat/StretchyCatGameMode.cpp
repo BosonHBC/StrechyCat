@@ -5,6 +5,23 @@
 #include "StretchyCatCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "SCGameState.h"
+#include "SCBaseController.h"
+#include "SCPlayerState.h"
+
+void AStretchyCatGameMode::BeginPlay()
+{
+
+}
+
+void AStretchyCatGameMode::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+	ASCPlayerState * playerState = Cast<ASCPlayerState>(NewPlayer->PlayerState);
+	playerState->SetMaxLife(MaxSharedLife);
+	playerState->SetCurrentLife(MaxSharedLife);
+
+	UE_LOG(LogTemp, Warning, TEXT("PostLogin: %d"), playerState->GetMaxHealth());
+}
 
 AStretchyCatGameMode::AStretchyCatGameMode()
 {
@@ -19,4 +36,22 @@ AStretchyCatGameMode::AStretchyCatGameMode()
 	//{
 	//	DefaultPawnClass = PlayerPawnBPClass.Class;
 	//}
+	CurrentSharedLife = MaxSharedLife;
+}
+
+void AStretchyCatGameMode::GetDamage(int _dmg)
+{
+	auto GS = GetGameState<ASCGameState>();
+	CurrentSharedLife -= _dmg;
+	GS->ChangeLifeCount(CurrentSharedLife, MaxSharedLife);
+	if (CurrentSharedLife <= 0) {
+		CurrentSharedLife = 0;
+		GS->GameOver(true);
+	}
+}
+
+void AStretchyCatGameMode::InitHealth()
+{
+	auto GS = GetGameState<ASCGameState>();
+	GS->ChangeLifeCount(CurrentSharedLife, MaxSharedLife);
 }
