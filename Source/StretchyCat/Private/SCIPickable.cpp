@@ -9,8 +9,10 @@
 ASCIPickable::ASCIPickable()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCol"));
+	BoxComp->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
 	RootComponent = BoxComp;
 	SuperMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("My Super Mesh"));
 	SuperMesh->SetupAttachment(BoxComp);
@@ -21,7 +23,8 @@ void ASCIPickable::DoInteraction(class ASCCharacterBase* ownActor)
 	Super::DoInteraction(ownActor);
 	PickPointSceneComp = ownActor->GetInteractionPoint();
 	bHolding = true;
-	
+	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECR_Ignore);
+	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BoxComp->SetEnableGravity(false);
 }
 
@@ -30,6 +33,9 @@ void ASCIPickable::CancelInteraction()
 	Super::CancelInteraction();
 	bHolding = false;
 	BoxComp->SetEnableGravity(true);
+	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
 }
 
 void ASCIPickable::Tick(float DeltaTime)

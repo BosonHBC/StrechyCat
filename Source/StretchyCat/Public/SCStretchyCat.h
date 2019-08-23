@@ -46,4 +46,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
 		float PercentToEnd;
+	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
+	bool bAbilityPressed;
+	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
+	bool bAbilityReleased;
 };

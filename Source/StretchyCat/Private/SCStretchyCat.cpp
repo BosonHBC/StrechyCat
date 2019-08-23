@@ -32,6 +32,8 @@ ASCStretchyCat::ASCStretchyCat() {
 	CollisionParams.AddIgnoredComponent(ExtendBodyCapComp);
 
 	PercentToEnd = 0;
+	bAbilityPressed = false;
+	bAbilityReleased = false;
 }
 
 void ASCStretchyCat::UseAbility()
@@ -50,8 +52,8 @@ void ASCStretchyCat::UseAbility()
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = this;
 	UKismetSystemLibrary::MoveComponentTo(ExtendBodyCapComp, FVector(RelativeXLocation, 0, -30), FRotator(0.0f, 0.0f, 0.0f), true, false, RelativeXLocation / BodyShootSpeed, false, EMoveComponentAction::Type::Move, LatentInfo);
-
-
+	bAbilityPressed = true;
+	bAbilityReleased = false;
 }
 
 void ASCStretchyCat::UnUseAbility()
@@ -59,10 +61,11 @@ void ASCStretchyCat::UnUseAbility()
 	Super::UnUseAbility();
 
 	float RelativeXLocation = ExtendBodyCapComp->RelativeLocation.X;
-
+	bAbilityReleased = true;
+	bAbilityPressed = false;
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = this;
-	UKismetSystemLibrary::MoveComponentTo(ExtendBodyCapComp, FVector(0, 0, -30), FRotator(0.0f, 0.0f, 0.0f), false, false, 2 * RelativeXLocation / BodyShootSpeed, false, EMoveComponentAction::Type::Move, LatentInfo);
+	UKismetSystemLibrary::MoveComponentTo(ExtendBodyCapComp, FVector(0, 0, -30), FRotator(0.0f, 0.0f, 0.0f), false, true, 2 * RelativeXLocation / BodyShootSpeed, false, EMoveComponentAction::Type::Move, LatentInfo);
 
 }
 
@@ -89,15 +92,10 @@ void ASCStretchyCat::Tick(float DeltaTime)
 		ExtendBodyComp->SetBoxExtent(NewExtent);
 		DrawDebugBox(GetWorld(), ExtendBodyComp->GetComponentLocation(), NewExtent, ExtendBodyComp->GetComponentRotation().Quaternion(),FColor::Yellow);
 
-
-
 		if (ExtendBodyCapComp->RelativeLocation.X <= 0.01f) {
 			bBodyOutside = false;
 			ExtendBodyCapComp->SetRelativeLocation(FVector(0, 0, -30));
 		}
-
-		
 	}
-	UE_LOG(LogTemp, Log, TEXT("Percent: %f"), PercentToEnd);
 
 }

@@ -4,6 +4,6 @@
 
 ASCBaseController::ASCBaseController()
 {
-	bShowMouseCursor = true;
-	DefaultMouseCursor = EMouseCursor::Crosshairs;
+	//bShowMouseCursor = true;
+	//DefaultMouseCursor = EMouseCursor::Crosshairs;
 }

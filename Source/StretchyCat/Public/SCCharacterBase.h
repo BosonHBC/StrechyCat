@@ -22,6 +22,10 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseLookUpRate;
+
+	bool GetCarryingActor() const { return bCarryingActor; }
+	void SetCarryingActor(bool val) { bCarryingActor = val; }
+	USceneComponent* GetInteractionPoint() const { return InteractionPoint; };
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -53,7 +57,7 @@ protected:
 		class ASCInteractableBase* InteractingActor;
 
 	bool bInteracting;
-
+	bool bCarryingActor;
 	FCollisionQueryParams CollisionParams;
 public:
 	// Called every frame
@@ -62,5 +66,5 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	USceneComponent* GetInteractionPoint() const { return InteractionPoint; };
+
 };
