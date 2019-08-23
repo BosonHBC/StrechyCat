@@ -15,14 +15,20 @@ class STRETCHYCAT_API ASCCharacterBase : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ASCCharacterBase();
+	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		float BaseTurnRate;
 
+	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		float BaseLookUpRate;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* TopDownCameraComponent;
+		class UCameraComponent* FollowCameraComp;
 
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -35,6 +41,8 @@ protected:
 	virtual void UnUseAbility();
 	void MoveForward(float _value);
 	void MoveRight(float _value);
+	void TurnAtRate(float _value);
+	void LookUpAtRate(float _value);
 	void Jump();
 
 	virtual void TakeDamage(int _dmg);
@@ -45,6 +53,8 @@ protected:
 		class ASCInteractableBase* InteractingActor;
 
 	bool bInteracting;
+
+	FCollisionQueryParams CollisionParams;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

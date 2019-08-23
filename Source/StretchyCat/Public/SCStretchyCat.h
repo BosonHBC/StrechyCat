@@ -29,7 +29,8 @@ protected:
 		float MaxForwardExtendDistance;
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 		float BodyShootSpeed;
-
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		class UBoxComponent* ExtendBodyComp;
 	
 
 private:

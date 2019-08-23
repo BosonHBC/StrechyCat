@@ -18,32 +18,29 @@ ASCCharacterBase::ASCCharacterBase()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Don't rotate character to camera direction
-	bUseControllerRotationPitch = true;
-	bUseControllerRotationYaw = true;
-	bUseControllerRotationRoll = true;
+	BaseTurnRate = 45.f;
+	BaseLookUpRate = 45.f;
 
 	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate character to moving direction
+	//GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate character to moving direction
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 640.f, 0.f);
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 
-	// Create a camera boom...
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->bAbsoluteRotation = true; // Don't want arm to rotate when character does
-	CameraBoom->TargetArmLength = 800.f;
-	CameraBoom->RelativeRotation = FRotator(-60.f, 0.f, 0.f);
-	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
+	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
+	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
 	// Create a camera...
-	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
-	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	FollowCameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	FollowCameraComp->SetupAttachment(CameraBoom); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	FollowCameraComp->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	InteractionPoint = CreateDefaultSubobject<USceneComponent>(TEXT("InteractPoint"));
 	bInteracting = false;
+
 	SetReplicates(true);
 	SetReplicateMovement(true);
 }
@@ -69,13 +66,13 @@ void ASCCharacterBase::UnUseAbility()
 
 void ASCCharacterBase::MoveForward(float _value)
 {
-	AddMovementInput(FVector::ForwardVector * _value);
+	AddMovementInput(GetActorForwardVector() * _value);
 
 }
 
 void ASCCharacterBase::MoveRight(float _value)
 {
-	AddMovementInput(FVector::RightVector * _value);
+	AddMovementInput(GetActorRightVector() * _value);
 
 }
 
@@ -90,7 +87,7 @@ void ASCCharacterBase::TakeDamage(int _dmg)
 	if (Role == ROLE_Authority)
 	{
 		AStretchyCatGameMode * scGM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-		scGM->GetDamage(_dmg);
+		//scGM->GetDamage(_dmg);
 	}
 }
 
@@ -107,20 +104,16 @@ void ASCCharacterBase::Interact()
 		InteractingActor->CancelInteraction();
 	}
 
-	//DrawDebugLine(GetWorld(), InteractionPoint->GetComponentLocation(), InteractionPoint->GetComponentLocation() + InteractionPoint->GetForwardVector() * 80.f, FColor::Blue, true);
 }
 
 // Called every frame
 void ASCCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-
 	FHitResult OutHit;
 	FVector Start = InteractionPoint->GetComponentLocation();
 	FVector Direction = InteractionPoint->GetForwardVector();
-	FCollisionQueryParams CollisionParams;
-	
+
 	GetWorld()->LineTraceSingleByChannel(OutHit, Start, Start + Direction * 80.f, ECC_Visibility, CollisionParams);
 	AActor* HitActor = OutHit.GetActor();
 	if (HitActor != nullptr) {
@@ -133,8 +126,6 @@ void ASCCharacterBase::Tick(float DeltaTime)
 	else {
 		if (!bInteracting)
 			InteractingActor = nullptr;
-
-		DrawDebugLine(GetWorld(), Start, Start + Direction * 80.f, FColor::Orange, true);
 	}
 }
 
@@ -146,11 +137,28 @@ void ASCCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("MoveForward", this, &ASCCharacterBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ASCCharacterBase::MoveRight);
 
+	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("TurnRate", this, &ASCCharacterBase::TurnAtRate);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &ASCCharacterBase::LookUpAtRate);
+
 	PlayerInputComponent->BindAction("Ability", IE_Pressed, this, &ASCCharacterBase::UseAbility);
 	PlayerInputComponent->BindAction("Ability", IE_Released, this, &ASCCharacterBase::UnUseAbility);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCCharacterBase::Jump);
 
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ASCCharacterBase::Interact);
+}
+
+void ASCCharacterBase::TurnAtRate(float _value)
+{
+	// calculate delta for this frame from the rate information
+	AddControllerYawInput(_value * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+}
+
+void ASCCharacterBase::LookUpAtRate(float _value)
+{
+	// calculate delta for this frame from the rate information
+	AddControllerPitchInput(_value * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
