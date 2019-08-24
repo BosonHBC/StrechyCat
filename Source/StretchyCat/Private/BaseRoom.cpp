@@ -4,6 +4,7 @@
 #include "BaseRoom.h"
 #include "Components/StaticMeshComponent.h"
 #include "SCGameState.h"
+#include "ObjectiveItemBase.h"
 #include <Net/UnrealNetwork.h>
 // Sets default values
 ABaseRoom::ABaseRoom()
@@ -15,7 +16,7 @@ ABaseRoom::ABaseRoom()
 	SetReplicates(true);
 	IsRoomCompleted = false;
 	CurrentObjectiveCount = 0;
-	TotalObjectives = 2;
+	TotalObjectives = 0;
 	PlayerSpawnLocation = FVector(0.0f, 0.0f, 0.0f);
 }
 
@@ -23,7 +24,19 @@ ABaseRoom::ABaseRoom()
 void ABaseRoom::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	if (Role == ROLE_Authority)
+	{
+		TArray<AActor *> children;
+		GetAllChildActors(children);
+		UE_LOG(LogTemp, Warning, TEXT("Children count %d"), children.Num())
+			for (auto child : children)
+			{
+				auto castto = Cast<AObjectiveItemBase>(child);
+				if (castto)
+					AllObjectives.Add(castto);
+			}
+		TotalObjectives = AllObjectives.Num();
+	}
 }
 
 void ABaseRoom::EnterTheRoom()
@@ -45,8 +58,9 @@ void ABaseRoom::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME_CONDITION(ABaseRoom, TotalObjectives, COND_InitialOnly);
+	DOREPLIFETIME(ABaseRoom, TotalObjectives);
 	DOREPLIFETIME(ABaseRoom, CurrentObjectiveCount);
 	DOREPLIFETIME(ABaseRoom, IsRoomCompleted);
+	DOREPLIFETIME(ABaseRoom, AllObjectives);
 }
 
