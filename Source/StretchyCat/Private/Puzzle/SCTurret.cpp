@@ -38,7 +38,6 @@ void ASCTurret::FireProjetile()
 {
 	UWorld* const World = GetWorld();
 	if (World) {
-		UE_LOG(LogTemp, Log, TEXT("Fire!"));
 		const FVector SpawnLocation = ((SpawnLocationComp != nullptr) ? SpawnLocationComp->GetComponentLocation() : GetActorLocation());
 
 		//Set Spawn Collision Handling Override

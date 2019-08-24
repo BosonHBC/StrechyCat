@@ -16,8 +16,6 @@ class STRETCHYCAT_API ASCSpinTurtle : public ASCCharacterBase
 public:
 	ASCSpinTurtle();
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components)
-		class URotatingMovementComponent* RotateMovementComp;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components)
 		class USceneComponent* RotateParentComp;
 
 
@@ -26,6 +24,11 @@ protected:
 	void UnUseAbility() override;
 	void Interact() override;
 	
+	void RecoverRotation();
+
+	float currentRotateRadSpeed;
+	bool bRecovering;
+
 public:
 
 	virtual void Tick(float DeltaTime) override;
@@ -34,4 +37,12 @@ public:
 		bool bAbilityPressed;
 	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
 		bool bAbilityReleased;
+
+	UPROPERTY( BlueprintReadOnly, Category = Gameplay)
+		bool bRotating;
+
+	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+	float RotateRadSpeed;
+	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+		float RotateRadSpeedDamping;
 };

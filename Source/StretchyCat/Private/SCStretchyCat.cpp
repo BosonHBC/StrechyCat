@@ -108,7 +108,6 @@ void ASCStretchyCat::OnBodyReachDest()
 void ASCStretchyCat::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	DrawDebugSphere(GetWorld(), InteractionPoint->GetComponentLocation(), 16, 8, FColor::Blue);
 	if (bBodyOutside) {
 		FVector RelativeLoc = ExtendBodyCapComp->RelativeLocation;
 

@@ -111,6 +111,8 @@ void ASCCharacterBase::Interact()
 void ASCCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	DrawDebugSphere(GetWorld(), InteractionPoint->GetComponentLocation(), 16, 8, FColor::Orange, false);
+
 	FHitResult OutHit;
 	FVector Start = InteractionPoint->GetComponentLocation();
 	FVector Direction = InteractionPoint->GetForwardVector();
