@@ -18,14 +18,21 @@ class STRETCHYCAT_API ASCPlayerState : public APlayerState
 	int CurrentHealth;
 	UPROPERTY(Replicated, VisibleAnywhere)
 	int MaxHealth;
+	UPROPERTY(Replicated, VisibleAnywhere)
+	class ABaseRoom* CurrentRoom;
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const override;
 public:
+	
 	void SetCurrentLife(int _lives);
 	void SetMaxLife(int _lives);
+	void SetCurrentRoom(class ABaseRoom* room);
 	UFUNCTION(BlueprintCallable)
-	int GetCurrentHealth();
+	int GetCurrentHealth() const;
 
 	UFUNCTION(BlueprintCallable)
-	int GetMaxHealth();
+	int GetMaxHealth() const;
+
+	UFUNCTION(BlueprintCallable)
+	class ABaseRoom * GetCurrentRoom() const;
 };

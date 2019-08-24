@@ -9,6 +9,7 @@ void ASCPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	DOREPLIFETIME(ASCPlayerState, CurrentHealth);
 	DOREPLIFETIME(ASCPlayerState, MaxHealth);
+	DOREPLIFETIME_CONDITION(ASCPlayerState, CurrentRoom, COND_OwnerOnly);
 }
 
 void ASCPlayerState::SetCurrentLife(int _lives)
@@ -21,12 +22,22 @@ void ASCPlayerState::SetMaxLife(int _lives)
 	MaxHealth = _lives;
 }
 
-int ASCPlayerState::GetCurrentHealth()
+void ASCPlayerState::SetCurrentRoom(ABaseRoom* room)
+{
+	CurrentRoom = room;
+}
+
+int ASCPlayerState::GetCurrentHealth() const
 {
 	return CurrentHealth;
 }
 
-int ASCPlayerState::GetMaxHealth()
+int ASCPlayerState::GetMaxHealth() const
 {
 	return MaxHealth;
+}
+
+ABaseRoom* ASCPlayerState::GetCurrentRoom() const
+{
+	return CurrentRoom;
 }

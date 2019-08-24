@@ -7,9 +7,12 @@
 #include "SCGameState.h"
 #include "SCBaseController.h"
 #include "SCPlayerState.h"
+#include "BaseRoom.h"
+#include "Engine/World.h"
 
 void AStretchyCatGameMode::BeginPlay()
 {
+	InitialRoom = Cast<ABaseRoom>(GetWorld()->SpawnActor(InitialRoomClass));
 
 }
 
@@ -19,8 +22,8 @@ void AStretchyCatGameMode::PostLogin(APlayerController* NewPlayer)
 	ASCPlayerState * playerState = Cast<ASCPlayerState>(NewPlayer->PlayerState);
 	playerState->SetMaxLife(MaxSharedLife);
 	playerState->SetCurrentLife(MaxSharedLife);
-
-	IncGoalObjectiveCount();
+	playerState->SetCurrentRoom(InitialRoom);
+	//IncGoalObjectiveCount();
 	UE_LOG(LogTemp, Warning, TEXT("PostLogin: %d"), playerState->GetMaxHealth());
 }
 
@@ -57,27 +60,41 @@ void AStretchyCatGameMode::InitHealth()
 	GS->ChangeLifeCount(CurrentSharedLife, MaxSharedLife);
 }
 
-void AStretchyCatGameMode::IncCurrentObjectiveCount()
+void AStretchyCatGameMode::IncCurrentObjectiveCount(ABaseRoom* Room)
 {
-	ASCGameState * scGS = GetGameState<ASCGameState>();
-	scGS->SetGameObjective(scGS->GetCurrentObjective() + 1, scGS->GetGoalObjective());
+	if (!Room->IsRoomCompleted)
+	{
+		Room->CurrentObjectiveCount++;
+		if(Room->OnCompleteObjective.IsBound())
+			Room->OnCompleteObjective.Execute(1);
+		if (Room->CurrentObjectiveCount == Room->TotalObjectives)
+		{
+			Room->IsRoomCompleted = true;
+			Room->OnCompleteRoom.ExecuteIfBound();
+		}
+	}
+	//ASCGameState * scGS = GetGameState<ASCGameState>();
 }
 
-void AStretchyCatGameMode::IncGoalObjectiveCount()
+//void AStretchyCatGameMode::IncGoalObjectiveCount(ABaseRoom* Room)
+//{
+//	ASCGameState * scGS = GetGameState<ASCGameState>();
+//	scGS->SetGameObjective(scGS->GetCurrentObjective(), scGS->GetGoalObjective() + 1);
+//}
+
+void AStretchyCatGameMode::DecCurrentObjectiveCount(ABaseRoom* Room)
 {
-	ASCGameState * scGS = GetGameState<ASCGameState>();
-	scGS->SetGameObjective(scGS->GetCurrentObjective(), scGS->GetGoalObjective() + 1);
+	if (!Room->IsRoomCompleted)
+	{
+		Room->CurrentObjectiveCount--;
+		if (Room->OnUncompleteObjective.IsBound())
+			Room->OnUncompleteObjective.Execute(1);
+	}
 }
 
-void AStretchyCatGameMode::DecCurrentObjectiveCount()
-{
-	ASCGameState * scGS = GetGameState<ASCGameState>();
-	scGS->SetGameObjective(scGS->GetCurrentObjective() - 1, scGS->GetGoalObjective());
-}
-
-void AStretchyCatGameMode::DecGoalObjectiveCount()
-{
-	ASCGameState * scGS = GetGameState<ASCGameState>();
-	scGS->SetGameObjective(scGS->GetCurrentObjective(), scGS->GetGoalObjective() - 1);
-}
+//void AStretchyCatGameMode::DecGoalObjectiveCount(ABaseRoom* Room)
+//{
+//	ASCGameState * scGS = GetGameState<ASCGameState>();
+//	scGS->SetGameObjective(scGS->GetCurrentObjective(), scGS->GetGoalObjective() - 1);
+//}
 

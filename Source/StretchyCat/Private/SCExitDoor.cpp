@@ -19,6 +19,7 @@ ASCExitDoor::ASCExitDoor()
 	ActivateArea->SetCollisionResponseToAllChannels(ECR_Ignore);
 	ActivateArea->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	ActivateArea->SetupAttachment(DoorMesh);
+	ActivateArea->SetHiddenInGame(false);
 
 	SetReplicates(true);
 	SetReplicateMovement(true);
@@ -41,21 +42,22 @@ void ASCExitDoor::Tick(float DeltaTime)
 void ASCExitDoor::NotifyActorBeginOverlap(AActor * OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
-	ASCCharacterBase * overlappingCharacter = Cast<ASCCharacterBase>(OtherActor);
+	/*ASCCharacterBase * overlappingCharacter = Cast<ASCCharacterBase>(OtherActor);
 	if (overlappingCharacter && Role == ROLE_Authority)
 	{
 		AStretchyCatGameMode * scGM = Cast<AStretchyCatGameMode>(GetWorld()->GetAuthGameMode());
 		if (scGM)
 		{
+
 			scGM->IncCurrentObjectiveCount();
 		}
-	}
+	}*/
 }
 
 void ASCExitDoor::NotifyActorEndOverlap(AActor * OtherActor)
 {
 	Super::NotifyActorEndOverlap(OtherActor);
-	ASCCharacterBase * overlappingCharacter = Cast<ASCCharacterBase>(OtherActor);
+	/*ASCCharacterBase * overlappingCharacter = Cast<ASCCharacterBase>(OtherActor);
 	if (overlappingCharacter && Role == ROLE_Authority)
 	{
 		AStretchyCatGameMode * scGM = Cast<AStretchyCatGameMode>(GetWorld()->GetAuthGameMode());
@@ -63,6 +65,6 @@ void ASCExitDoor::NotifyActorEndOverlap(AActor * OtherActor)
 		{
 			scGM->DecCurrentObjectiveCount();
 		}
-	}
+	}*/
 }
 

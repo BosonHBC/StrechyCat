@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "StretchyCatGameMode.generated.h"
 
+
 UCLASS(minimalapi)
 class AStretchyCatGameMode : public AGameModeBase
 {
@@ -17,16 +18,20 @@ protected:
 		int MaxSharedLife;
 	UPROPERTY(VisibleAnywhere, Category = "Gameplay")
 		int CurrentSharedLife;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+		TSubclassOf<class ABaseRoom> InitialRoomClass;
+
+	class ABaseRoom* InitialRoom;
 public:
 	AStretchyCatGameMode();
 
 	void GetDamage(int _dmg);
 	void InitHealth();
 
-	void IncCurrentObjectiveCount();
-	void IncGoalObjectiveCount();
-	void DecCurrentObjectiveCount();
-	void DecGoalObjectiveCount();
+	void IncCurrentObjectiveCount(class ABaseRoom* Room);
+	//void IncGoalObjectiveCount(ABaseRoom* Room);
+	void DecCurrentObjectiveCount(class ABaseRoom* Room);
+	//void DecGoalObjectiveCount(ABaseRoom* Room);
 };
 
 

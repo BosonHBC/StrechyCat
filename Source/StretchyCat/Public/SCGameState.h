@@ -16,18 +16,18 @@ class STRETCHYCAT_API ASCGameState : public AGameStateBase
 public:
 	ASCGameState();
 protected:
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Gameplay")
+	/*UPROPERTY(Replicated, BlueprintReadOnly, Category = "Gameplay")
 		int ObjectiveGoal;
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Gameplay")
 		int CurrentObjective;
 
-	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;*/
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "GameObjective")
+	/*UFUNCTION(BlueprintCallable, Category = "GameObjective")
 	int GetCurrentObjective() const { return CurrentObjective; }
 	UFUNCTION(BlueprintCallable, Category = "GameObjective")
-	int GetGoalObjective() const { return ObjectiveGoal; }
+	int GetGoalObjective() const { return ObjectiveGoal; }*/
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "GameLoop")
 	void GameOver(bool _success);
@@ -35,5 +35,5 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void ChangeLifeCount(int cur_health, int max_health);
 
-	void SetGameObjective(int cur_obj, int max_obj);
+	//void SetGameObjective(int cur_obj, int max_obj);
 };
