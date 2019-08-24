@@ -12,14 +12,8 @@ ASCExitDoor::ASCExitDoor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	DoorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorMesh"));
-	DoorMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	DoorMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	RootComponent = DoorMesh;
-	ActivateArea = CreateDefaultSubobject<UBoxComponent>(TEXT("ActivateArea"));
-	ActivateArea->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	ActivateArea->SetCollisionResponseToAllChannels(ECR_Ignore);
-	ActivateArea->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	ActivateArea->SetupAttachment(DoorMesh);
-	ActivateArea->SetHiddenInGame(false);
 
 	SetReplicates(true);
 	SetReplicateMovement(true);
@@ -39,32 +33,4 @@ void ASCExitDoor::Tick(float DeltaTime)
 
 }
 
-void ASCExitDoor::NotifyActorBeginOverlap(AActor * OtherActor)
-{
-	Super::NotifyActorBeginOverlap(OtherActor);
-	/*ASCCharacterBase * overlappingCharacter = Cast<ASCCharacterBase>(OtherActor);
-	if (overlappingCharacter && Role == ROLE_Authority)
-	{
-		AStretchyCatGameMode * scGM = Cast<AStretchyCatGameMode>(GetWorld()->GetAuthGameMode());
-		if (scGM)
-		{
-
-			scGM->IncCurrentObjectiveCount();
-		}
-	}*/
-}
-
-void ASCExitDoor::NotifyActorEndOverlap(AActor * OtherActor)
-{
-	Super::NotifyActorEndOverlap(OtherActor);
-	/*ASCCharacterBase * overlappingCharacter = Cast<ASCCharacterBase>(OtherActor);
-	if (overlappingCharacter && Role == ROLE_Authority)
-	{
-		AStretchyCatGameMode * scGM = Cast<AStretchyCatGameMode>(GetWorld()->GetAuthGameMode());
-		if (scGM)
-		{
-			scGM->DecCurrentObjectiveCount();
-		}
-	}*/
-}
 

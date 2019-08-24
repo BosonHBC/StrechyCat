@@ -18,6 +18,9 @@ ABaseRoom::ABaseRoom()
 	CurrentObjectiveCount = 0;
 	TotalObjectives = 0;
 	PlayerSpawnLocation = FVector(0.0f, 0.0f, 0.0f);
+
+	//add default event
+	OnCompleteRoom.BindUFunction(this, TEXT("OnRoomComplete"));
 }
 
 // Called when the game starts or when spawned
