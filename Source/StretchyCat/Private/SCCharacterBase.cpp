@@ -11,6 +11,10 @@
 #include "Components/SceneComponent.h"
 #include "SCInteractableBase.h"
 #include "StretchyCatGameMode.h"
+#include "TimerManager.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Materials/Material.h"
+#include "StretchyCatPlayerController.h"
 
 // Sets default values
 ASCCharacterBase::ASCCharacterBase()
@@ -41,6 +45,10 @@ ASCCharacterBase::ASCCharacterBase()
 	InteractionPoint = CreateDefaultSubobject<USceneComponent>(TEXT("InteractPoint"));
 	bInteracting = false;
 
+	NormalMaterial = CreateDefaultSubobject<UMaterial>(TEXT("NormalMaterial"));
+	InvinceMaterial = CreateDefaultSubobject<UMaterial>(TEXT("InvinceMaterial"));
+
+	InvinceTime = 3.f;
 
 	SetReplicates(true);
 	SetReplicateMovement(true);
@@ -55,14 +63,30 @@ void ASCCharacterBase::BeginPlay()
 
 void ASCCharacterBase::UseAbility()
 {
-	// Base Ability
+	ServerUseAbility();
+}
+void ASCCharacterBase::UnUseAbility()
+{
+	ServerUnUseAbility();
+}
+void ASCCharacterBase::ServerUseAbility_Implementation()
+{
 
 }
 
-void ASCCharacterBase::UnUseAbility()
+bool ASCCharacterBase::ServerUseAbility_Validate()
 {
-	// Base release ability
+	return true;
+}
 
+void ASCCharacterBase::ServerUnUseAbility_Implementation()
+{
+
+}
+
+bool ASCCharacterBase::ServerUnUseAbility_Validate()
+{
+	return true;
 }
 
 void ASCCharacterBase::MoveForward(float _value)
@@ -83,15 +107,24 @@ void ASCCharacterBase::Jump()
 	Super::Jump();
 }
 
-void ASCCharacterBase::TakeDamage(int _dmg)
+void ASCCharacterBase::TakeDamage(AActor* DmgFrom, int _dmg)
 {
 	if (Role == ROLE_Authority)
 	{
 		AStretchyCatGameMode * scGM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
 		//scGM->GetDamage(_dmg);
 	}
+	StartInvincible(DmgFrom);
+	OnTakeDamage(DmgFrom);
 }
 
+
+void ASCCharacterBase::Respawn(FVector GroundLocation)
+{
+	// Respawn the player in another player's head
+	
+	SetActorLocationAndRotation(GroundLocation + FVector(0, 0, 400.f), FRotator::ZeroRotator, false);
+}
 
 void ASCCharacterBase::Interact()
 {
@@ -105,6 +138,29 @@ void ASCCharacterBase::Interact()
 		InteractingActor->CancelInteraction();
 	}
 
+}
+
+void ASCCharacterBase::OnInvinceTimeOver()
+{
+	bInvincible = false;
+	GetMesh()->SetMaterial(0, NormalMaterial);
+	EnableInput(nullptr);
+
+	// Temp Position
+	Respawn(FVector(0, 0, 170.f));
+}
+
+void ASCCharacterBase::StartInvincible(AActor* DmgFrom)
+{
+	DisableInput(nullptr);
+	// Start Timer
+	GetWorldTimerManager().SetTimer(InvinceTimeHandle, this,&ASCCharacterBase::OnInvinceTimeOver, InvinceTime, false);
+	bInvincible = true;
+	// Change Material
+	GetMesh()->SetMaterial(0, InvinceMaterial);
+	//Set Knock back
+	FVector DmgImpulse = ((GetActorLocation() - DmgFrom->GetActorLocation()).GetSafeNormal() - GetActorForwardVector())* DmgFrom->GetVelocity().Size() * 20.f;
+	GetCharacterMovement()->AddImpulse(DmgImpulse);
 }
 
 // Called every frame

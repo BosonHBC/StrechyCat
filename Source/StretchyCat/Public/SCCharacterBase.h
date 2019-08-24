@@ -26,6 +26,7 @@ public:
 	bool GetCarryingActor() const { return bCarryingActor; }
 	void SetCarryingActor(bool val) { bCarryingActor = val; }
 	USceneComponent* GetInteractionPoint() const { return InteractionPoint; };
+	bool Invincible() const { return bInvincible; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -41,24 +42,44 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		class USceneComponent* InteractionPoint;
 
-	virtual void UseAbility();
-	virtual void UnUseAbility();
+
+	 virtual void UseAbility();
+	 UFUNCTION(Server, Reliable, WithValidation)
+		 virtual void ServerUseAbility();
+
+	 virtual void UnUseAbility();
+	 UFUNCTION(Server, Reliable, WithValidation)
+		 virtual void ServerUnUseAbility();
+
 	void MoveForward(float _value);
 	void MoveRight(float _value);
 	void TurnAtRate(float _value);
 	void LookUpAtRate(float _value);
 	void Jump();
 
-	virtual void TakeDamage(int _dmg);
 
 	virtual void Interact();
 
 	UPROPERTY(VisibleAnywhere, Category = "Gameplay")
 		class ASCInteractableBase* InteractingActor;
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+		float InvinceTime;
+
+	FTimerHandle InvinceTimeHandle;
+	void OnInvinceTimeOver();
 
 	bool bInteracting;
 	bool bCarryingActor;
 	FCollisionQueryParams CollisionParams;
+
+	UPROPERTY(EditDefaultsOnly)
+		class UMaterial* NormalMaterial;
+	UPROPERTY(EditDefaultsOnly)
+		class UMaterial* InvinceMaterial;
+
+	void StartInvincible(AActor* DmgFrom);
+	// invincible 
+	bool bInvincible;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -66,5 +87,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	virtual void TakeDamage(AActor* DmgFrom, int _dmg);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = Gameplay)
+	void OnTakeDamage(AActor* DmgFrom);
+
+	void Respawn(FVector GroundLocation);
 };

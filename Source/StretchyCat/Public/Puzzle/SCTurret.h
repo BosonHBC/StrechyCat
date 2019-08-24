@@ -33,7 +33,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	void FireProjetile();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastFireProjetile();
 
 	void ToggleShooting(bool _enable);
 };

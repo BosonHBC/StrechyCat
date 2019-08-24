@@ -18,8 +18,8 @@ public:
 	ASCStretchyCat();
 
 protected:
-	void UseAbility() override;
-	void UnUseAbility() override;
+	void ServerUseAbility_Implementation() override;
+	void ServerUnUseAbility_Implementation() override;
 	void Interact() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))

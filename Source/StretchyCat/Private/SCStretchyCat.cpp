@@ -39,9 +39,9 @@ ASCStretchyCat::ASCStretchyCat() {
 	BaseImpulse = 30;
 }
 
-void ASCStretchyCat::UseAbility()
+void ASCStretchyCat::ServerUseAbility_Implementation()
 {
-	Super::UseAbility();
+	Super::ServerUseAbility();
 	FHitResult OutHit;
 	FVector Start = ExtendBodyCapComp->GetComponentLocation();
 	FVector Direction = ExtendBodyCapComp->GetForwardVector();
@@ -64,9 +64,9 @@ void ASCStretchyCat::UseAbility()
 	bAbilityReleased = false;
 }
 
-void ASCStretchyCat::UnUseAbility()
+void ASCStretchyCat::ServerUnUseAbility_Implementation()
 {
-	Super::UnUseAbility();
+	Super::ServerUnUseAbility();
 
 	float RelativeXLocation = ExtendBodyCapComp->RelativeLocation.X;
 	bAbilityReleased = true;
