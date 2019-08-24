@@ -6,9 +6,11 @@
 #include "UObject/ConstructorHelpers.h"
 #include "SCGameState.h"
 #include "SCBaseController.h"
+#include "SCCharacterBase.h"
 #include "SCPlayerState.h"
 #include "BaseRoom.h"
 #include "Engine/World.h"
+
 
 void AStretchyCatGameMode::BeginPlay()
 {
@@ -90,6 +92,16 @@ void AStretchyCatGameMode::DecCurrentObjectiveCount(ABaseRoom* Room)
 		if (Room->OnUncompleteObjective.IsBound())
 			Room->OnUncompleteObjective.Execute(1);
 	}
+}
+
+void AStretchyCatGameMode::CreateSelectedPawn_Implementation(TSubclassOf<ASCCharacterBase> selectedCharacter, ASCBaseController * playerController)
+{
+	auto oldPawn = playerController->GetPawn();
+	if (oldPawn)
+	{
+		GetWorld()->DestroyActor(oldPawn);
+	}
+	playerController->Possess(GetWorld()->SpawnActor<ASCCharacterBase>(selectedCharacter, playerController->GetPlayerState<ASCPlayerState>()->GetCurrentRoom()->PlayerSpawnLocation, FRotator(0.0f, 0.0f, 0.0f), FActorSpawnParameters()));
 }
 
 //void AStretchyCatGameMode::DecGoalObjectiveCount(ABaseRoom* Room)

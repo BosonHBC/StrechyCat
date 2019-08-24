@@ -31,6 +31,8 @@ public:
 	//void IncGoalObjectiveCount(ABaseRoom* Room);
 	void DecCurrentObjectiveCount(class ABaseRoom* Room);
 	//void DecGoalObjectiveCount(ABaseRoom* Room);
+	UFUNCTION(NetMulticast, Reliable, Category = "CharaterSelect")
+		void CreateSelectedPawn(TSubclassOf<class ASCCharacterBase> selectedCharacter, class ASCBaseController * controller);
 };
 
 

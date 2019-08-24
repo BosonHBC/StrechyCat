@@ -16,5 +16,6 @@ class STRETCHYCAT_API ASCBaseController : public APlayerController
 
 public:
 	ASCBaseController();
-
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "CharacterSelect")
+	void SelectCharacterClass(TSubclassOf<class ASCCharacterBase> selectedClass);
 };

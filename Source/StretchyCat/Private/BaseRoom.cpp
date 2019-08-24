@@ -16,6 +16,7 @@ ABaseRoom::ABaseRoom()
 	IsRoomCompleted = false;
 	CurrentObjectiveCount = 0;
 	TotalObjectives = 2;
+	PlayerSpawnLocation = FVector(0.0f, 0.0f, 0.0f);
 }
 
 // Called when the game starts or when spawned

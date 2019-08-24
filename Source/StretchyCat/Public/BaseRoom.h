@@ -29,6 +29,8 @@ public:
 	int TotalObjectives;
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Info")
 	bool IsRoomCompleted;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
+	FVector PlayerSpawnLocation;
 
 
 protected:
