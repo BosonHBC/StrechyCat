@@ -21,13 +21,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
 		TSubclassOf<class ABaseRoom> InitialRoomClass;
 
-	class ABaseRoom* InitialRoom;
 public:
 	AStretchyCatGameMode();
 
 	void GetDamage(int _dmg);
 	void InitHealth();
-
+	class ABaseRoom* InitialRoom;
 	void IncCurrentObjectiveCount(class ABaseRoom* Room);
 	//void IncGoalObjectiveCount(ABaseRoom* Room);
 	void DecCurrentObjectiveCount(class ABaseRoom* Room);

@@ -2,6 +2,17 @@
 
 #include "SCPlayerState.h"
 #include "Net/UnrealNetwork.h"
+#include "Engine/World.h"
+#include "StretchyCatGameMode.h"
+
+void ASCPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+	if (Role == ROLE_Authority)
+	{
+		CurrentRoom = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>()->InitialRoom;
+	}
+}
 
 void ASCPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

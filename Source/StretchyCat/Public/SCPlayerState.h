@@ -21,6 +21,7 @@ class STRETCHYCAT_API ASCPlayerState : public APlayerState
 	UPROPERTY(Replicated, VisibleAnywhere)
 	class ABaseRoom* CurrentRoom;
 protected:
+	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> & OutLifetimeProps) const override;
 public:
 	

@@ -13,7 +13,7 @@ AObjectiveItemBase::AObjectiveItemBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	isCompleted = false;
 	SetReplicates(true);
 }
 
@@ -24,33 +24,6 @@ void AObjectiveItemBase::BeginPlay()
 	
 }
 
-void AObjectiveItemBase::Internal_UncompleteObjective(ASCBaseController* playerController)
-{
-	AStretchyCatGameMode* GM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-	if (GM != nullptr)
-	{
-		if (isCompleted)
-		{
-			isCompleted = false;
-			auto playerState = playerController->GetPlayerState<ASCPlayerState>();
-			GM->DecCurrentObjectiveCount(playerState->GetCurrentRoom());
-		}
-	}
-}
-
-void AObjectiveItemBase::Internal_CompleteObjective(ASCBaseController* playerController)
-{
-	AStretchyCatGameMode* GM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-	if (GM != nullptr)
-	{
-		if (!isCompleted)
-		{
-			isCompleted = true;
-			auto playerState = playerController->GetPlayerState<ASCPlayerState>();
-			GM->IncCurrentObjectiveCount(playerState->GetCurrentRoom());
-		}
-	}
-}
 
 // Called every frame
 void AObjectiveItemBase::Tick(float DeltaTime)
@@ -65,14 +38,44 @@ void AObjectiveItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AObjectiveItemBase, isCompleted)
 }
 
+bool AObjectiveItemBase::UncompleteObjective_Validate(ASCBaseController* playerController)
+{
+	return true;
+}
+
+bool AObjectiveItemBase::CompleteObjective_Validate(ASCBaseController* playerController)
+{
+	return true;
+}
+
 void AObjectiveItemBase::CompleteObjective_Implementation(ASCBaseController* playerController)
 {
-	Internal_CompleteObjective(playerController);
+	AStretchyCatGameMode* GM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
+	if (GM != nullptr)
+	{
+		if (!isCompleted)
+		{
+			isCompleted = true;
+			auto playerState = playerController->GetPlayerState<ASCPlayerState>();
+			UE_LOG(LogTemp, Warning, TEXT("CompleteObjective"));
+			GM->IncCurrentObjectiveCount(playerState->GetCurrentRoom());
+		}
+	}
 	
 }
 
 void AObjectiveItemBase::UncompleteObjective_Implementation(ASCBaseController* playerController)
 {
-	Internal_UncompleteObjective(playerController);
+	AStretchyCatGameMode* GM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
+	if (GM != nullptr)
+	{
+		if (isCompleted)
+		{
+			isCompleted = false;
+			auto playerState = playerController->GetPlayerState<ASCPlayerState>();
+			UE_LOG(LogTemp, Warning, TEXT("UNCompleteObjective"));
+			GM->DecCurrentObjectiveCount(playerState->GetCurrentRoom());
+		}
+	}
 }
 

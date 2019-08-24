@@ -46,5 +46,6 @@ void ABaseRoom::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 
 	DOREPLIFETIME_CONDITION(ABaseRoom, TotalObjectives, COND_InitialOnly);
 	DOREPLIFETIME(ABaseRoom, CurrentObjectiveCount);
+	DOREPLIFETIME(ABaseRoom, IsRoomCompleted);
 }
 

@@ -20,17 +20,14 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	//for inheritance
-	virtual void Internal_CompleteObjective(class ASCBaseController* playerController);
-	virtual void Internal_UncompleteObjective(class ASCBaseController* playerController);
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Objective")
+	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation, Category = "Objective")
 	void CompleteObjective(class ASCBaseController * playerController);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Objective")
+	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation, Category = "Objective")
 	void UncompleteObjective(class ASCBaseController* playerController);
 };
