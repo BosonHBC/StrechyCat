@@ -30,4 +30,6 @@ public:
 	void CompleteObjective(class ASCBaseController * playerController);
 	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation, Category = "Objective")
 	void UncompleteObjective(class ASCBaseController* playerController);
+	UFUNCTION(BlueprintCallable, Category = "Objective")
+	bool GetIfCompleted() const { return isCompleted; }
 };

@@ -13,6 +13,8 @@ class STRETCHYCAT_API ABaseRoom : public AActor
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UStaticMeshComponent* RoomFloor;
+	UPROPERTY(Replicated, VisibleAnywhere, Category = "Components")
+	TArray < class AObjectiveItemBase* > AllObjectives;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
 	FName RoomName;
 	// Sets default values for this actor's properties
