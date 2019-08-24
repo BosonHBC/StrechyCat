@@ -3,17 +3,19 @@
 #include "Puzzle/SCBulletProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "SCCharacterBase.h"
+#include "SCSpinTurtle.h"
 // Sets default values
 ASCBulletProjectile::ASCBulletProjectile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Use a sphere as a simple collision representation
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(5.0f);
-	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
-	CollisionComp->OnComponentHit.AddDynamic(this, &ASCBulletProjectile::OnHit);		// set up a notification for when this component hits something blocking
+	//CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
+	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &ASCBulletProjectile::OnHit);		// set up a notification for when this component hits something blocking
 
 	// Players can't walk on it
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
@@ -32,22 +34,49 @@ ASCBulletProjectile::ASCBulletProjectile()
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
+
+	SetReplicates(true);
+	SetReplicateMovement(true);
 }
 
 // Called when the game starts or when spawned
 void ASCBulletProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
-void ASCBulletProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ASCBulletProjectile::OnHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+		ASCCharacterBase* Base = Cast< ASCCharacterBase>(OtherActor);
+		if (Base)
+		{
+			ASCSpinTurtle* Turtle = Cast<ASCSpinTurtle>(Base);
+			if (Turtle) {
+				if (Turtle->bRotating) {
+					// Deflecting
 
-		Destroy();
+				}
+				else {
+					// Damage Turtle
+					if (!Turtle->Invincible())
+						Turtle->TakeDamage(this, 1);
+					Destroy();
+				}
+			}
+			// Not a Turtle
+			else {
+				// Damage Character
+				if (!Base->Invincible())
+					Base->TakeDamage(this, 1);
+				Destroy();
+			}
+		}
+		else {
+			Destroy();
+		}
 	}
 }
 

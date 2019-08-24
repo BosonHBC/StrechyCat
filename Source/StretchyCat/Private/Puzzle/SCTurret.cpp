@@ -9,7 +9,7 @@
 // Sets default values
 ASCTurret::ASCTurret()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	RootComponent = MeshComp;
@@ -18,6 +18,9 @@ ASCTurret::ASCTurret()
 	SpawnLocationComp->SetupAttachment(MeshComp);
 
 	ShootingInterval = 0.2f;
+
+	SetReplicates(true);
+	SetReplicateMovement(true);
 }
 
 // Called when the game starts or when spawned
@@ -34,10 +37,12 @@ void ASCTurret::Tick(float DeltaTime)
 
 }
 
-void ASCTurret::FireProjetile()
+
+
+void ASCTurret::MulticastFireProjetile_Implementation()
 {
-	UWorld* const World = GetWorld();
-	if (World) {
+
+	if (ProjectileClass) {
 		const FVector SpawnLocation = ((SpawnLocationComp != nullptr) ? SpawnLocationComp->GetComponentLocation() : GetActorLocation());
 
 		//Set Spawn Collision Handling Override
@@ -45,22 +50,25 @@ void ASCTurret::FireProjetile()
 		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
 		// spawn the projectile at the muzzle
-		World->SpawnActor<ASCBulletProjectile>(ProjectileClass, SpawnLocation, SpawnLocationComp->GetComponentRotation(), ActorSpawnParams);
+		GetWorld()->SpawnActor<ASCBulletProjectile>(ProjectileClass, SpawnLocation, SpawnLocationComp->GetComponentRotation(), ActorSpawnParams);
 	}
 
 }
 
 void ASCTurret::ToggleShooting(bool _enable)
 {
-	if (_enable) {
-		bCanSpawnProjectile = true;
-		// Start timer
-		GetWorldTimerManager().SetTimer(shootingTimeHandle, this, &ASCTurret::FireProjetile, ShootingInterval, true, 0.5f);
+	if (Role == ROLE_Authority) {
+		if (_enable) {
+			bCanSpawnProjectile = true;
+			// Start timer
+			GetWorldTimerManager().SetTimer(shootingTimeHandle, this, &ASCTurret::MulticastFireProjetile, ShootingInterval, true, 0.5f);
+		}
+		else {
+			bCanSpawnProjectile = false;
+			// disable timer
+			GetWorldTimerManager().ClearTimer(shootingTimeHandle);
+		}
 	}
-	else {
-		bCanSpawnProjectile = false;
-		// disable timer
-		GetWorldTimerManager().ClearTimer(shootingTimeHandle);
-	}
+
 }
 

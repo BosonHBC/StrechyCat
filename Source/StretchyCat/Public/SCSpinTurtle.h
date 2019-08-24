@@ -20,13 +20,19 @@ public:
 
 
 protected:
-	void UseAbility() override;
-	void UnUseAbility() override;
+	void ServerUseAbility_Implementation() override;
+	bool ServerUseAbility_Validate() override;
+	void ServerUnUseAbility_Implementation() override;
+	bool ServerUnUseAbility_Validate() override;
+
+
 	void Interact() override;
 	
 	void RecoverRotation();
 
+
 	float currentRotateRadSpeed;
+	UPROPERTY(Replicated)
 	bool bRecovering;
 
 public:
@@ -38,11 +44,20 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
 		bool bAbilityReleased;
 
-	UPROPERTY( BlueprintReadOnly, Category = Gameplay)
+	UPROPERTY( BlueprintReadOnly, Replicated,Category = Gameplay)
 		bool bRotating;
 
 	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
 	float RotateRadSpeed;
 	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
 		float RotateRadSpeedDamping;
+
+	UFUNCTION()
+		void OnActorHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	FORCEINLINE bool GetRecovering() const { return bRecovering; }
+
+	UFUNCTION(NetMulticast, Reliable)
+		void MulticastSetInitialRadSpeed();
+
 };
