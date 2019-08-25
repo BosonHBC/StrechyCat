@@ -9,6 +9,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "SCInteractableBase.h"
+#include "Net/UnrealNetwork.h"
+
 ASCStretchyCat::ASCStretchyCat() {
 
 	// Create Extend body
@@ -41,7 +43,7 @@ ASCStretchyCat::ASCStretchyCat() {
 
 void ASCStretchyCat::ServerUseAbility_Implementation()
 {
-	Super::ServerUseAbility();
+
 	FHitResult OutHit;
 	FVector Start = ExtendBodyCapComp->GetComponentLocation();
 	FVector Direction = ExtendBodyCapComp->GetForwardVector();
@@ -54,29 +56,44 @@ void ASCStretchyCat::ServerUseAbility_Implementation()
 		DrawDebugLine(GetWorld(), Start, Start + Direction * RelativeXLocation, FColor::Red, true);
 	}
 	bBodyOutside = true;
+
+	
+	MulticastExtendBodyByRelativeDist(RelativeXLocation);
+}
+
+void ASCStretchyCat::MulticastExtendBodyByRelativeDist_Implementation(float _relaXLoc) {
+	
+	bAbilityPressed = true;
+	bAbilityReleased = false;
+
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = this;
 	LatentInfo.ExecutionFunction = "OnBodyReachDest";
 	LatentInfo.UUID = 123;
 	LatentInfo.Linkage = 0;
-	UKismetSystemLibrary::MoveComponentTo(ExtendBodyCapComp, FVector(RelativeXLocation, 0, -30), FRotator(0.0f, 0.0f, 0.0f), true, true, RelativeXLocation / BodyShootSpeed, false, EMoveComponentAction::Type::Move, LatentInfo);
-	bAbilityPressed = true;
-	bAbilityReleased = false;
+	UKismetSystemLibrary::MoveComponentTo(ExtendBodyCapComp, FVector(_relaXLoc, 0, -30), FRotator(0.0f, 0.0f, 0.0f), true, true, _relaXLoc / BodyShootSpeed, false, EMoveComponentAction::Type::Move, LatentInfo);
+
 }
 
 void ASCStretchyCat::ServerUnUseAbility_Implementation()
 {
-	Super::ServerUnUseAbility();
 
 	float RelativeXLocation = ExtendBodyCapComp->RelativeLocation.X;
+
+
+	MulticastReturnBody(RelativeXLocation);
+}
+void ASCStretchyCat::MulticastReturnBody_Implementation(float _relaXLoc) {
+	
 	bAbilityReleased = true;
 	bAbilityPressed = false;
+	
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = this;
 	LatentInfo.ExecutionFunction = "OnBodyBackToBody";
 	LatentInfo.UUID = 124;
 	LatentInfo.Linkage = 0;
-	UKismetSystemLibrary::MoveComponentTo(ExtendBodyCapComp, FVector(0, 0, -30), FRotator(0.0f, 0.0f, 0.0f), false, true, 2 * RelativeXLocation / BodyShootSpeed, false, EMoveComponentAction::Type::Move, LatentInfo);
+	UKismetSystemLibrary::MoveComponentTo(ExtendBodyCapComp, FVector(0, 0, -30), FRotator(0.0f, 0.0f, 0.0f), false, true, 2 * _relaXLoc / BodyShootSpeed, false, EMoveComponentAction::Type::Move, LatentInfo);
 
 }
 
@@ -124,5 +141,12 @@ void ASCStretchyCat::Tick(float DeltaTime)
 			ExtendBodyCapComp->SetRelativeLocation(FVector(0, 0, -30));
 		}
 	}
+
+}
+void ASCStretchyCat::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ASCStretchyCat, PercentToEnd);
+	DOREPLIFETIME(ASCStretchyCat, bBodyOutside);
 
 }

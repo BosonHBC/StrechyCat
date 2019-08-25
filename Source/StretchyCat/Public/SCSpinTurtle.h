@@ -35,6 +35,8 @@ protected:
 	UPROPERTY(Replicated)
 	bool bRecovering;
 
+	UFUNCTION(NetMulticast, Reliable)
+		void MulticastSetInitialRadSpeed();
 public:
 
 	virtual void Tick(float DeltaTime) override;
@@ -57,7 +59,5 @@ public:
 
 	FORCEINLINE bool GetRecovering() const { return bRecovering; }
 
-	UFUNCTION(NetMulticast, Reliable)
-		void MulticastSetInitialRadSpeed();
 
 };

@@ -36,7 +36,15 @@ protected:
 		float BaseImpulse;
 private:
 	FVector BodyLandedLcation;
+
+	UPROPERTY(Replicated)
 	bool bBodyOutside;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastExtendBodyByRelativeDist(float _RelaXLoc);
+
+	UFUNCTION(NetMulticast, Reliable)
+		void MulticastReturnBody(float _RelaXLoc);
 
 	AActor* HeadHitActor;
 	FVector HeadHitPoint;
@@ -49,9 +57,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "LateFunction")
 		void OnBodyReachDest();
 
-	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Gameplay")
 		float PercentToEnd;
-	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
+	UPROPERTY(BlueprintReadOnly,Category = "Gameplay")
 	bool bAbilityPressed;
 	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
 	bool bAbilityReleased;
