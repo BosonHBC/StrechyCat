@@ -5,7 +5,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "SCGameState.h"
 #include "ObjectiveItemBase.h"
+#include "SCCharacterBase.h"
 #include <Net/UnrealNetwork.h>
+#include "Components/BoxComponent.h"
 // Sets default values
 ABaseRoom::ABaseRoom()
 {
@@ -13,6 +15,21 @@ ABaseRoom::ABaseRoom()
 	PrimaryActorTick.bCanEverTick = true;
 	RoomFloor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RoomFloor"));
 	RootComponent = RoomFloor;
+	RoomEntrance = CreateDefaultSubobject<UBoxComponent>(TEXT("Entrance"));
+	RoomExit = CreateDefaultSubobject<UBoxComponent>(TEXT("Exit"));
+	RoomEntrance->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	RoomEntrance->SetCollisionResponseToAllChannels(ECR_Ignore);
+	RoomEntrance->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	RoomEntrance->SetupAttachment(RoomFloor);
+	
+	RoomExit->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	RoomExit->SetCollisionResponseToAllChannels(ECR_Ignore);
+	RoomExit->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	RoomExit->SetupAttachment(RoomFloor);
+	
+	RoomEntrance->OnComponentBeginOverlap.AddDynamic(this, &ABaseRoom::EnterTheRoom);
+	RoomExit->OnComponentBeginOverlap.AddDynamic(this, &ABaseRoom::LeaveTheRoom);
+
 	SetReplicates(true);
 	IsRoomCompleted = false;
 	CurrentObjectiveCount = 0;
@@ -42,14 +59,37 @@ void ABaseRoom::BeginPlay()
 	}
 }
 
-void ABaseRoom::EnterTheRoom()
+void ABaseRoom::EnterTheRoom_Implementation(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
+	{
+		ASCCharacterBase* character = Cast<ASCCharacterBase>(OtherActor);
+		if (character != nullptr)
+		{
+
+		}
+	}
 }
 
-void ABaseRoom::LeaveTheRoom()
+bool ABaseRoom::EnterTheRoom_Validate(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	return true;
 }
+void ABaseRoom::LeaveTheRoom_Implementation(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
+	{
+		ASCCharacterBase* character = Cast<ASCCharacterBase>(OtherActor);
+		if (character != nullptr)
+		{
 
+		}
+	}
+}
+bool ABaseRoom::LeaveTheRoom_Validate(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	return true;
+}
 // Called every frame
 void ABaseRoom::Tick(float DeltaTime)
 {

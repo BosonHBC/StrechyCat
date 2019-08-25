@@ -17,12 +17,16 @@ public:
 	TArray < class AObjectiveItemBase* > AllObjectives;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
 	FName RoomName;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UBoxComponent* RoomEntrance;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UBoxComponent* RoomExit;
 	// Sets default values for this actor's properties
 	ABaseRoom();
 	DECLARE_DELEGATE(RoomDelegate)
 	DECLARE_DELEGATE_RetVal_OneParam(bool, CompleteObjectiveDelegate, int)
 
-	RoomDelegate OnEnterRoom, OnLeaveRoom, OnCompleteRoom;
+	RoomDelegate OnCompleteRoom;
 	CompleteObjectiveDelegate OnCompleteObjective, OnUncompleteObjective;
 
 	UPROPERTY(Replicated, BlueprintReadOnly , Category = "Info")
@@ -38,10 +42,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	UFUNCTION()
-	virtual void EnterTheRoom();
-	UFUNCTION()
-	virtual void LeaveTheRoom();
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void EnterTheRoom(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void LeaveTheRoom(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
