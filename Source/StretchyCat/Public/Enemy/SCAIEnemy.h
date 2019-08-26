@@ -18,14 +18,11 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = Components)
-		class UCapsuleComponent* CapComp;
-	UPROPERTY(VisibleAnywhere, Category = Components)
-class UArrowComponent* ArrowComp;
-	UPROPERTY(VisibleAnywhere, Category = Components)
-		class USkeletalMeshComponent* SuperMesh;
+		class UStaticMeshComponent* SuperMesh;
+	UPROPERTY(Edi, Category = Components)
+		class USphereComponent* SphereComp;
 
-	UPROPERTY(VisibleAnywhere, Category = Components)
-		class UCharacterMovementComponent* MovementComp;
+
 	UPROPERTY(VisibleAnywhere, Category = Components)
 		class UPawnSensingComponent* PawnSeningComp;
 	UFUNCTION()
