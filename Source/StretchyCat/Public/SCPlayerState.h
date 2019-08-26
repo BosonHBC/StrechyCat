@@ -14,11 +14,11 @@ class STRETCHYCAT_API ASCPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 
-	UPROPERTY(Replicated, VisibleAnywhere)
+	UPROPERTY(Replicated, VisibleAnywhere, Category = "PlayerInfo")
 	int CurrentHealth;
-	UPROPERTY(Replicated, VisibleAnywhere)
+	UPROPERTY(Replicated, VisibleAnywhere, Category = "PlayerInfo")
 	int MaxHealth;
-	UPROPERTY(Replicated, VisibleAnywhere)
+	UPROPERTY(Replicated, VisibleAnywhere, Category = "PlayerInfo")
 	class ABaseRoom* CurrentRoom;
 protected:
 	virtual void BeginPlay() override;

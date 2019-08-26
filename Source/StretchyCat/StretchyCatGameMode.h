@@ -33,6 +33,8 @@ public:
 	//void DecGoalObjectiveCount(ABaseRoom* Room);
 	UFUNCTION(NetMulticast, Reliable, Category = "CharaterSelect")
 		void CreateSelectedPawn(TSubclassOf<class ASCCharacterBase> selectedCharacter, class ASCBaseController * controller);
+	UFUNCTION(NetMulticast, Reliable, Category = "Message")
+		void SendServerMessageToUI(const FText& message);
 };
 
 

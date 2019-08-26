@@ -18,4 +18,7 @@ public:
 	ASCBaseController();
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "CharacterSelect")
 	void SelectCharacterClass(TSubclassOf<class ASCCharacterBase> selectedClass);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "UIShowMessage")
+	void ShowServerMessage(const FText & message);
 };

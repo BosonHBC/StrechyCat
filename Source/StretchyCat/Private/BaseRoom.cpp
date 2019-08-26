@@ -6,6 +6,8 @@
 #include "SCGameState.h"
 #include "ObjectiveItemBase.h"
 #include "SCCharacterBase.h"
+#include "SCPlayerState.h"
+#include "StretchyCatGameMode.h"
 #include <Net/UnrealNetwork.h>
 #include "Components/BoxComponent.h"
 // Sets default values
@@ -28,7 +30,7 @@ ABaseRoom::ABaseRoom()
 	RoomExit->SetupAttachment(RoomFloor);
 	
 	RoomEntrance->OnComponentBeginOverlap.AddDynamic(this, &ABaseRoom::EnterTheRoom);
-	RoomExit->OnComponentBeginOverlap.AddDynamic(this, &ABaseRoom::LeaveTheRoom);
+	RoomExit->OnComponentEndOverlap.AddDynamic(this, &ABaseRoom::LeaveTheRoom);
 
 	SetReplicates(true);
 	IsRoomCompleted = false;
@@ -66,7 +68,19 @@ void ABaseRoom::EnterTheRoom_Implementation(UPrimitiveComponent* OverlappedComp,
 		ASCCharacterBase* character = Cast<ASCCharacterBase>(OtherActor);
 		if (character != nullptr)
 		{
-
+			auto gm = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
+			if (gm)
+			{
+				auto ps = character->GetPlayerState<ASCPlayerState>();
+				if (ps)
+				{
+					if (ps->GetCurrentRoom() != this)
+					{
+						ps->SetCurrentRoom(this);
+						gm->SendServerMessageToUI(FText::FromString(FString("Player " + ps->PlayerName + " Entered " + RoomName.ToString())));
+					}
+				}
+			}
 		}
 	}
 }
@@ -75,18 +89,27 @@ bool ABaseRoom::EnterTheRoom_Validate(UPrimitiveComponent* OverlappedComp, AActo
 {
 	return true;
 }
-void ABaseRoom::LeaveTheRoom_Implementation(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABaseRoom::LeaveTheRoom_Implementation(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	{
 		ASCCharacterBase* character = Cast<ASCCharacterBase>(OtherActor);
 		if (character != nullptr)
 		{
-
+			auto gm = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
+			if (gm)
+			{
+				auto ps = character->GetPlayerState<ASCPlayerState>();
+				if (ps)
+				{
+					if(ps->GetCurrentRoom() == this)
+						gm->SendServerMessageToUI(FText::FromString(FString("Player " + ps->PlayerName + " Left " + RoomName.ToString())));
+				}
+			}
 		}
 	}
 }
-bool ABaseRoom::LeaveTheRoom_Validate(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+bool ABaseRoom::LeaveTheRoom_Validate(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	return true;
 }

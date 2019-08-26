@@ -25,6 +25,7 @@ void AStretchyCatGameMode::PostLogin(APlayerController* NewPlayer)
 	playerState->SetMaxLife(MaxSharedLife);
 	playerState->SetCurrentLife(MaxSharedLife);
 	playerState->SetCurrentRoom(InitialRoom);
+	playerState->PlayerName = FString("Player") + FString::FromInt(GetNumPlayers());
 	//IncGoalObjectiveCount();
 	UE_LOG(LogTemp, Warning, TEXT("PostLogin: %d"), playerState->GetMaxHealth());
 }
@@ -91,6 +92,18 @@ void AStretchyCatGameMode::DecCurrentObjectiveCount(ABaseRoom* Room)
 		Room->CurrentObjectiveCount--;
 		if (Room->OnUncompleteObjective.IsBound())
 			Room->OnUncompleteObjective.Execute(1);
+	}
+}
+
+void AStretchyCatGameMode::SendServerMessageToUI_Implementation(const FText& message)
+{
+	for (auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		ASCBaseController * scBC = Cast<ASCBaseController>(It->Get());
+		if (scBC && scBC->IsLocalController())
+		{
+			scBC->ShowServerMessage(message);
+		}
 	}
 }
 
