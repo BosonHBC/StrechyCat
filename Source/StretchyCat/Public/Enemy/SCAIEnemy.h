@@ -19,9 +19,8 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, Category = Components)
 		class UStaticMeshComponent* SuperMesh;
-	UPROPERTY(Edi, Category = Components)
+	UPROPERTY(EditDefaultsOnly, Category = Components)
 		class USphereComponent* SphereComp;
-
 
 	UPROPERTY(VisibleAnywhere, Category = Components)
 		class UPawnSensingComponent* PawnSeningComp;
