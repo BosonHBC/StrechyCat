@@ -2,32 +2,25 @@
 
 
 #include "SCAIEnemy.h"
-#include "Components/CapsuleComponent.h"
-#include "Components/SkeletalMeshComponent.h"
+#include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Perception/PawnSensingComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Components/ArrowComponent.h"
+#include "AIModule/Classes/AIController.h"
 // Sets default values
 ASCAIEnemy::ASCAIEnemy()
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	CapComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapComp"));
-	RootComponent = CapComp;
-	CapComp->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
-	CapComp->OnComponentBeginOverlap.AddDynamic(this, &ASCAIEnemy::OnHit);
-
-	SuperMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SpuerMesh"));
-	SuperMesh->SetupAttachment(CapComp);
-	SuperMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	SuperMesh->SetRelativeRotation(FRotator(0,-90,0));
+	SuperMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	RootComponent = SuperMesh;
+	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
+	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASCAIEnemy::OnHit);
 
 	// invisible
-	MovementComp = CreateDefaultSubobject<UCharacterMovementComponent>(TEXT("CharaMovement"));
-	MovementComp->UpdatedComponent = CapComp;
 	PawnSeningComp = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComp"));
 
+	
 }
 
 // Called when the game starts or when spawned
@@ -53,4 +46,11 @@ void ASCAIEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 void ASCAIEnemy::OnHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (OtherActor != nullptr && OtherActor != this) {
+		UE_LOG(LogTemp, Log, TEXT("Hit %s"), *OtherActor->GetName());
+		AAIController* atCtrl = Cast<AAIController>(GetController());
+		//atCtrl->MoveToLocation(FVector(140, -350, 230));
+
+	//	atCtrl
+	}
 }
