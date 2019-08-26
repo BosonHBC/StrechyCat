@@ -12,6 +12,9 @@ ASCInteractableBase::ASCInteractableBase()
 	PrimaryActorTick.bCanEverTick = true;
 	SuperMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("My Super Mesh"));
 	RootComponent = SuperMesh;
+
+	//SetReplicateMovement(true);
+	SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
@@ -39,5 +42,25 @@ void ASCInteractableBase::CancelInteraction()
 	// Base Cancel Interaction
 	UE_LOG(LogTemp, Log, TEXT("Cancel Interaction"));
 
+}
+
+void ASCInteractableBase::ServerCancelInteraction_Implementation()
+{
+
+}
+
+bool ASCInteractableBase::ServerCancelInteraction_Validate()
+{
+	return true;
+}
+
+void ASCInteractableBase::ServerDoInteraction_Implementation(class ASCCharacterBase* ownActor)
+{
+
+}
+
+bool ASCInteractableBase::ServerDoInteraction_Validate(class ASCCharacterBase* ownActor)
+{
+	return true;
 }
 

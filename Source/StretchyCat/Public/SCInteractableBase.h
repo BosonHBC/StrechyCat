@@ -28,4 +28,9 @@ public:
 	virtual void DoInteraction(class ASCCharacterBase* ownActor );
 
 	virtual void CancelInteraction();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void ServerDoInteraction(class ASCCharacterBase* ownActor);
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void ServerCancelInteraction();
 };

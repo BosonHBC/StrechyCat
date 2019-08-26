@@ -128,16 +128,25 @@ void ASCCharacterBase::Respawn(FVector GroundLocation)
 
 void ASCCharacterBase::Interact()
 {
+	ServerInteract();
+}
+
+void ASCCharacterBase::ServerInteract_Implementation()
+{
 	// Base Interact
 	if (!bInteracting && InteractingActor != nullptr) {
 		bInteracting = true;
-		InteractingActor->DoInteraction(this);
+		InteractingActor->ServerDoInteraction(this);
 	}
 	else if (bInteracting && InteractingActor != nullptr) {
 		bInteracting = false;
-		InteractingActor->CancelInteraction();
+		InteractingActor->ServerCancelInteraction();
 	}
+}
 
+bool ASCCharacterBase::ServerInteract_Validate()
+{
+	return true;
 }
 
 void ASCCharacterBase::OnInvinceTimeOver()
@@ -176,7 +185,7 @@ void ASCCharacterBase::Tick(float DeltaTime)
 	GetWorld()->LineTraceSingleByChannel(OutHit, Start, Start + Direction * 80.f, ECC_Visibility, CollisionParams);
 	AActor* HitActor = OutHit.GetActor();
 	if (HitActor != nullptr) {
-		DrawDebugLine(GetWorld(), Start, HitActor->GetActorLocation(), FColor::Blue, true);
+	//	DrawDebugLine(GetWorld(), Start, HitActor->GetActorLocation(), FColor::Blue, true, 0.1f);
 		ASCInteractableBase* baseInteractable = Cast<ASCInteractableBase>(HitActor);
 		if (baseInteractable != nullptr) {
 			InteractingActor = baseInteractable;

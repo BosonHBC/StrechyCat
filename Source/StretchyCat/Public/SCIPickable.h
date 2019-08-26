@@ -21,8 +21,9 @@ protected:
 
 
 
-
+	UPROPERTY(Replicated)
 	class USceneComponent* PickPointSceneComp;
+	UPROPERTY(Replicated)
 	bool bHolding;
 
 	void DoInteraction(class ASCCharacterBase* ownActor) override;
@@ -33,4 +34,11 @@ private:
 public:
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void ServerDoInteraction_Implementation(class ASCCharacterBase* ownActor) override;
+	virtual void ServerCancelInteraction_Implementation() override;
+
+	UFUNCTION(NetMulticast, Reliable)
+		virtual void MulticastDoInteraction(class ASCCharacterBase* ownActor);
+	UFUNCTION(NetMulticast, Reliable)
+		virtual void MulticastCancelInteraction();
 };

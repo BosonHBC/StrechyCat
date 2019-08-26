@@ -59,6 +59,8 @@ protected:
 
 
 	virtual void Interact();
+	UFUNCTION(Server, Reliable, WithValidation)
+		virtual void ServerInteract();
 
 	UPROPERTY(VisibleAnywhere, Category = "Gameplay")
 		class ASCInteractableBase* InteractingActor;
