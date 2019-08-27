@@ -3,6 +3,7 @@
 
 #include "SCAIEnemy.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Perception/PawnSensingComponent.h"
 #include "AIModule/Classes/AIController.h"
@@ -20,7 +21,6 @@ ASCAIEnemy::ASCAIEnemy()
 	// invisible
 	PawnSeningComp = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComp"));
 
-	
 }
 
 // Called when the game starts or when spawned
@@ -49,7 +49,7 @@ void ASCAIEnemy::OnHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, 
 	if (OtherActor != nullptr && OtherActor != this) {
 		UE_LOG(LogTemp, Log, TEXT("Hit %s"), *OtherActor->GetName());
 		AAIController* atCtrl = Cast<AAIController>(GetController());
-		//atCtrl->MoveToLocation(FVector(140, -350, 230));
+		atCtrl->MoveToLocation(FVector(140, -350, 230));
 
 	//	atCtrl
 	}
