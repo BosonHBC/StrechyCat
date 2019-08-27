@@ -48,3 +48,16 @@ void ASCGameState::ChangeLifeCount_Implementation(int cur_health, int max_health
 //	CurrentObjective = cur_obj;
 //	ObjectiveGoal = max_obj;
 //}
+
+void ASCGameState::GameOver_Implementation(bool _success)
+{
+	for (auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		ASCBaseController * scBC = Cast<ASCBaseController>(It->Get());
+		if (scBC && scBC->IsLocalController())
+		{
+			scBC->DisableInput(scBC);
+			scBC->ShowServerMessage(FText::FromString(TEXT("YOU DIED")));
+		}
+	}
+}

@@ -29,7 +29,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GameObjective")
 	int GetGoalObjective() const { return ObjectiveGoal; }*/
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "GameLoop")
+	UFUNCTION(BlueprintNativeEvent, Category = "GameLoop")
 	void GameOver(bool _success);
 
 	UFUNCTION(NetMulticast, Reliable)
