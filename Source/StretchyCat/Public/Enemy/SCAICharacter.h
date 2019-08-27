@@ -29,17 +29,16 @@ protected:
 	UFUNCTION()
 		void OnNotHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	UFUNCTION()
-		void OnSeenPawn(APawn* Pawn);
-
+		void OnPawnSeen(APawn* Pawn);
+	
+	FVector InitialLocation;
+	FRotator InitialRotation;
 	bool bDetecting;
 	float detectCD;
+	void MoveToLocation(FVector _Location);
+	void MoveToActor(AActor* _destActor);
 
-
-	void ResetAI() {
-		// Go back to patrol point
-		bDetecting = false;
-		detectCD = 3;
-	}
+	void ResetAI();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

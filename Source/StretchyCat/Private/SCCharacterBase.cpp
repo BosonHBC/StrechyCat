@@ -113,33 +113,12 @@ void ASCCharacterBase::TakeDamage(AActor* DmgFrom, int _dmg)
 		if (Role == ROLE_Authority)
 		{
 			AStretchyCatGameMode * scGM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-			//scGM->GetDamage(_dmg);
+			scGM->GetDamage(_dmg);
 		}
 		UE_LOG(LogTemp, Log, TEXT("%s is attacking by %s"), *GetName(), *DmgFrom->GetName());
 		StartInvincible(DmgFrom);
 		OnTakeDamage(DmgFrom);
-	}	if (Role == ROLE_Authority)
-	{
-		AStretchyCatGameMode * scGM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-		//scGM->GetDamage(_dmg);
 	}
-	UE_LOG(LogTemp, Log, TEXT("%s is attacking by %s"), *GetName(), *DmgFrom->GetName());
-	StartInvincible(DmgFrom);
-	OnTakeDamage(DmgFrom);	if (Role == ROLE_Authority)
-	{
-		AStretchyCatGameMode * scGM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-		//scGM->GetDamage(_dmg);
-	}
-	UE_LOG(LogTemp, Log, TEXT("%s is attacking by %s"), *GetName(), *DmgFrom->GetName());
-	StartInvincible(DmgFrom);
-	OnTakeDamage(DmgFrom);	if (Role == ROLE_Authority)
-	{
-		AStretchyCatGameMode * scGM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-		//scGM->GetDamage(_dmg);
-	}
-	UE_LOG(LogTemp, Log, TEXT("%s is attacking by %s"), *GetName(), *DmgFrom->GetName());
-	StartInvincible(DmgFrom);
-	OnTakeDamage(DmgFrom);
 }
 
 
