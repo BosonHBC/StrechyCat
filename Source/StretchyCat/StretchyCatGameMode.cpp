@@ -10,11 +10,24 @@
 #include "SCPlayerState.h"
 #include "BaseRoom.h"
 #include "Engine/World.h"
+#include "Components/BoxComponent.h"
+#include "EngineUtils.h"
 
 
 void AStretchyCatGameMode::BeginPlay()
 {
-	InitialRoom = Cast<ABaseRoom>(GetWorld()->SpawnActor(InitialRoomClass));
+	for (TActorIterator<ABaseRoom> it(GetWorld()); it; ++it)
+	{
+		auto a = *it;
+		auto c = a->GetClass();
+		if (c == InitialRoomClass.Get())
+		{
+			InitialRoom = a;
+			break;
+		}
+	}
+	if(InitialRoom == nullptr)
+		InitialRoom = Cast<ABaseRoom>(GetWorld()->SpawnActor(InitialRoomClass));
 
 }
 
@@ -110,11 +123,16 @@ void AStretchyCatGameMode::SendServerMessageToUI_Implementation(const FText& mes
 void AStretchyCatGameMode::CreateSelectedPawn_Implementation(TSubclassOf<ASCCharacterBase> selectedCharacter, ASCBaseController * playerController)
 {
 	auto oldPawn = playerController->GetPawn();
-	if (oldPawn)
+
+	auto newCharacter = GetWorld()->SpawnActor<ASCCharacterBase>(selectedCharacter, playerController->GetPlayerState<ASCPlayerState>()->GetCurrentRoom()->RoomSpawn->GetComponentLocation(), FRotator(0.0f, 0.0f, 0.0f), FActorSpawnParameters());
+	if (newCharacter != nullptr && oldPawn)
 	{
 		GetWorld()->DestroyActor(oldPawn);
+		playerController->Possess(newCharacter);
+
 	}
-	playerController->Possess(GetWorld()->SpawnActor<ASCCharacterBase>(selectedCharacter, playerController->GetPlayerState<ASCPlayerState>()->GetCurrentRoom()->PlayerSpawnLocation, FRotator(0.0f, 0.0f, 0.0f), FActorSpawnParameters()));
+	else
+		SendServerMessageToUI(FText::FromString(TEXT("Character cannot spawn at the moment.")));
 }
 
 //void AStretchyCatGameMode::DecGoalObjectiveCount(ABaseRoom* Room)

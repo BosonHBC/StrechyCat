@@ -33,10 +33,15 @@ void ASCPlayerState::SetMaxLife(int _lives)
 	MaxHealth = _lives;
 }
 
-void ASCPlayerState::SetCurrentRoom(ABaseRoom* room)
+void ASCPlayerState::SetCurrentRoom_Implementation(ABaseRoom* room)
 {
 	CurrentRoom = room;
 }
+bool ASCPlayerState::SetCurrentRoom_Validate(ABaseRoom* room)
+{
+	return true;
+}
+
 
 int ASCPlayerState::GetCurrentHealth() const
 {
