@@ -61,3 +61,15 @@ void ASCGameState::GameOver_Implementation(bool _success)
 		}
 	}
 }
+
+void ASCGameState::SendMessageToUI_Implementation(const FText& message)
+{
+	for (auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		ASCBaseController * scBC = Cast<ASCBaseController>(It->Get());
+		if (scBC && scBC->IsLocalController())
+		{
+			scBC->ShowServerMessage(message);
+		}
+	}
+}

@@ -35,5 +35,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void ChangeLifeCount(int cur_health, int max_health);
 
+	UFUNCTION(NetMulticast, Reliable)
+		void SendMessageToUI(const FText & message);
 	//void SetGameObjective(int cur_obj, int max_obj);
 };

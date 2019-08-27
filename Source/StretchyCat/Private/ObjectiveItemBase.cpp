@@ -58,7 +58,9 @@ void AObjectiveItemBase::CompleteObjective_Implementation(ASCBaseController* pla
 			isCompleted = true;
 			auto playerState = playerController->GetPlayerState<ASCPlayerState>();
 			UE_LOG(LogTemp, Warning, TEXT("CompleteObjective"));
-			GM->IncCurrentObjectiveCount(playerState->GetCurrentRoom());
+			ABaseRoom * room = playerState->CurrentRoom;
+			
+			playerState->SetCurrentRoom(room, room->CurrentObjectiveCount + 1, room->TotalObjectives);
 		}
 	}
 	
@@ -71,10 +73,18 @@ void AObjectiveItemBase::UncompleteObjective_Implementation(ASCBaseController* p
 	{
 		if (isCompleted)
 		{
-			isCompleted = false;
 			auto playerState = playerController->GetPlayerState<ASCPlayerState>();
-			UE_LOG(LogTemp, Warning, TEXT("UNCompleteObjective"));
-			GM->DecCurrentObjectiveCount(playerState->GetCurrentRoom());
+			ABaseRoom * room = playerState->CurrentRoom;
+			if (!room->IsRoomCompleted)
+			{
+				isCompleted = false;
+				UE_LOG(LogTemp, Warning, TEXT("UNCompleteObjective"));
+				playerState->SetCurrentRoom(room, room->CurrentObjectiveCount - 1, room->TotalObjectives);
+			}
+			else
+				UE_LOG(LogTemp, Warning, TEXT("CANNOT UNCompleteObjective BECAUSE ROOM COMPLETE"));
+
+				
 		}
 	}
 }

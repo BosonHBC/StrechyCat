@@ -3,6 +3,7 @@
 #include "SCPlayerState.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/World.h"
+#include "BaseRoom.h"
 #include "StretchyCatGameMode.h"
 
 void ASCPlayerState::BeginPlay()
@@ -33,15 +34,14 @@ void ASCPlayerState::SetMaxLife(int _lives)
 	MaxHealth = _lives;
 }
 
-void ASCPlayerState::SetCurrentRoom_Implementation(ABaseRoom* room)
+void ASCPlayerState::SetCurrentRoom_Implementation(ABaseRoom* room, int curObj, int totObj)
 {
 	CurrentRoom = room;
+		CurrentRoom->TotalObjectives = totObj;
+		CurrentRoom->CurrentObjectiveCount = curObj;
+		if (CurrentRoom->CurrentObjectiveCount == CurrentRoom->TotalObjectives)
+			CurrentRoom->IsRoomCompleted = true;
 }
-bool ASCPlayerState::SetCurrentRoom_Validate(ABaseRoom* room)
-{
-	return true;
-}
-
 
 int ASCPlayerState::GetCurrentHealth() const
 {

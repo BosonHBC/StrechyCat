@@ -38,8 +38,8 @@ void AStretchyCatGameMode::PostLogin(APlayerController* NewPlayer)
 	ASCPlayerState * playerState = Cast<ASCPlayerState>(NewPlayer->PlayerState);
 	playerState->SetMaxLife(MaxSharedLife);
 	playerState->SetCurrentLife(MaxSharedLife);
-	playerState->SetCurrentRoom(InitialRoom);
-	playerState->PlayerName = FString("Player") + FString::FromInt(GetNumPlayers());
+	//playerState->SetCurrentRoom(InitialRoom, InitialRoom->CurrentObjectiveCount, InitialRoom->TotalObjectives);
+	playerState->SetPlayerName(FString("Player") + FString::FromInt(GetNumPlayers()));
 	//IncGoalObjectiveCount();
 	UE_LOG(LogTemp, Warning, TEXT("PostLogin: %d"), playerState->GetMaxHealth());
 }
@@ -78,48 +78,12 @@ void AStretchyCatGameMode::InitHealth()
 	GS->ChangeLifeCount(CurrentSharedLife, MaxSharedLife);
 }
 
-void AStretchyCatGameMode::IncCurrentObjectiveCount(ABaseRoom* Room)
-{
-	if (!Room->IsRoomCompleted)
-	{
-		Room->CurrentObjectiveCount++;
-		if(Room->OnCompleteObjective.IsBound())
-			Room->OnCompleteObjective.Execute(1);
-		if (Room->CurrentObjectiveCount == Room->TotalObjectives)
-		{
-			Room->IsRoomCompleted = true;
-			Room->OnCompleteRoom.ExecuteIfBound();
-		}
-	}
-	//ASCGameState * scGS = GetGameState<ASCGameState>();
-}
 
-//void AStretchyCatGameMode::IncGoalObjectiveCount(ABaseRoom* Room)
-//{
-//	ASCGameState * scGS = GetGameState<ASCGameState>();
-//	scGS->SetGameObjective(scGS->GetCurrentObjective(), scGS->GetGoalObjective() + 1);
-//}
-
-void AStretchyCatGameMode::DecCurrentObjectiveCount(ABaseRoom* Room)
+void AStretchyCatGameMode::SendServerMessageToUI(const FText& message)
 {
-	if (!Room->IsRoomCompleted)
-	{
-		Room->CurrentObjectiveCount--;
-		if (Room->OnUncompleteObjective.IsBound())
-			Room->OnUncompleteObjective.Execute(1);
-	}
-}
+	auto GS = GetGameState<ASCGameState>();
 
-void AStretchyCatGameMode::SendServerMessageToUI_Implementation(const FText& message)
-{
-	for (auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
-	{
-		ASCBaseController * scBC = Cast<ASCBaseController>(It->Get());
-		if (scBC && scBC->IsLocalController())
-		{
-			scBC->ShowServerMessage(message);
-		}
-	}
+	GS->SendMessageToUI(message);
 }
 
 void AStretchyCatGameMode::CreateSelectedPawn_Implementation(TSubclassOf<ASCCharacterBase> selectedCharacter, ASCBaseController * playerController)

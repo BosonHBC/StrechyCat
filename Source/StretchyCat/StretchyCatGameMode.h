@@ -27,13 +27,9 @@ public:
 	void GetDamage(int _dmg);
 	void InitHealth();
 	class ABaseRoom* InitialRoom;
-	void IncCurrentObjectiveCount(class ABaseRoom* Room);
-	//void IncGoalObjectiveCount(ABaseRoom* Room);
-	void DecCurrentObjectiveCount(class ABaseRoom* Room);
-	//void DecGoalObjectiveCount(ABaseRoom* Room);
 	UFUNCTION(NetMulticast, Reliable, Category = "CharaterSelect")
 		void CreateSelectedPawn(TSubclassOf<class ASCCharacterBase> selectedCharacter, class ASCBaseController * controller);
-	UFUNCTION(NetMulticast, Reliable, Category = "Message")
+
 		void SendServerMessageToUI(const FText& message);
 };
 

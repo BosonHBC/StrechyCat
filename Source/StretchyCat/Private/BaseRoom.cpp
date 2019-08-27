@@ -72,7 +72,7 @@ void ABaseRoom::EnterTheRoom_Implementation(UPrimitiveComponent* OverlappedComp,
 				{
 					if (ps->GetCurrentRoom() != this)
 					{
-						ps->SetCurrentRoom(this);
+						ps->SetCurrentRoom(this, CurrentObjectiveCount, TotalObjectives);
 						gm->SendServerMessageToUI(FText::FromString(FString("Player " + ps->PlayerName + " Entered " + RoomName.ToString())));
 					}
 				}
