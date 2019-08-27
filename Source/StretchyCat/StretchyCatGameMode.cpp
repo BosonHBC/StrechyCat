@@ -33,14 +33,31 @@ void AStretchyCatGameMode::BeginPlay()
 
 void AStretchyCatGameMode::PostLogin(APlayerController* NewPlayer)
 {
+	if (Role == ROLE_Authority)
+	{
+		for (TActorIterator<ABaseRoom> it(GetWorld()); it; ++it)
+		{
+			auto a = *it;
+			auto c = a->GetClass();
+			if (c == InitialRoomClass.Get())
+			{
+				InitialRoom = a;
+				break;
+			}
+		}
+		if (InitialRoom == nullptr)
+			InitialRoom = Cast<ABaseRoom>(GetWorld()->SpawnActor(InitialRoomClass));
+	}
 	Super::PostLogin(NewPlayer);
 	ASCPlayerState * playerState = Cast<ASCPlayerState>(NewPlayer->PlayerState);
-	playerState->SetMaxLife(MaxSharedLife);
-	playerState->SetCurrentLife(MaxSharedLife);
-	playerState->SetCurrentRoom(InitialRoom);
+	playerState->MaxHealth = MaxSharedLife;
+	playerState->CurrentHealth = MaxSharedLife;
+	playerState->CurrentRoomName = InitialRoom->RoomName;
+	playerState->CurrentObjective = InitialRoom->CurrentObjectiveCount;
+	playerState->TotalObjective = InitialRoom->TotalObjectives;
 	playerState->PlayerName = FString("Player") + FString::FromInt(GetNumPlayers());
 	//IncGoalObjectiveCount();
-	UE_LOG(LogTemp, Warning, TEXT("PostLogin: %d"), playerState->GetMaxHealth());
+	UE_LOG(LogTemp, Warning, TEXT("PostLogin: %s"), *playerState->PlayerName);
 }
 
 AStretchyCatGameMode::AStretchyCatGameMode()
@@ -108,23 +125,21 @@ void AStretchyCatGameMode::DecCurrentObjectiveCount(ABaseRoom* Room)
 	}
 }
 
-void AStretchyCatGameMode::SendServerMessageToUI_Implementation(const FText& message)
+void AStretchyCatGameMode::SendServerMessageToUI(const FText& message)
 {
-	for (auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	ASCGameState * GS = GetGameState<ASCGameState>();
+	if (GS)
 	{
-		ASCBaseController * scBC = Cast<ASCBaseController>(It->Get());
-		if (scBC && scBC->IsLocalController())
-		{
-			scBC->ShowServerMessage(message);
-		}
+		GS->DisplayMessage(message);
 	}
+
 }
 
 void AStretchyCatGameMode::CreateSelectedPawn_Implementation(TSubclassOf<ASCCharacterBase> selectedCharacter, ASCBaseController * playerController)
 {
 	auto oldPawn = playerController->GetPawn();
 
-	auto newCharacter = GetWorld()->SpawnActor<ASCCharacterBase>(selectedCharacter, playerController->GetPlayerState<ASCPlayerState>()->GetCurrentRoom()->RoomSpawn->GetComponentLocation(), FRotator(0.0f, 0.0f, 0.0f), FActorSpawnParameters());
+	auto newCharacter = GetWorld()->SpawnActor<ASCCharacterBase>(selectedCharacter, InitialRoom->RoomSpawn->GetComponentLocation(), FRotator(0.0f, 0.0f, 0.0f), FActorSpawnParameters());
 	if (newCharacter != nullptr && oldPawn)
 	{
 		GetWorld()->DestroyActor(oldPawn);

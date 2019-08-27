@@ -21,7 +21,7 @@ void ASCGameState::ChangeLifeCount_Implementation(int cur_health, int max_health
 		if (scBC && scBC->IsLocalController())
 		{
 			ASCPlayerState * scPS = scBC->GetPlayerState<ASCPlayerState>();
-			scPS->SetCurrentLife(cur_health);
+			scPS->CurrentHealth = cur_health;
 		}
 	}
 }
@@ -48,3 +48,15 @@ void ASCGameState::ChangeLifeCount_Implementation(int cur_health, int max_health
 //	CurrentObjective = cur_obj;
 //	ObjectiveGoal = max_obj;
 //}
+
+void ASCGameState::DisplayMessage_Implementation(const FText & message)
+{
+	for (auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		ASCBaseController * scBC = Cast<ASCBaseController>(It->Get());
+		if (scBC)
+		{
+			scBC->ShowServerMessage(message);
+		}
+	}
+}

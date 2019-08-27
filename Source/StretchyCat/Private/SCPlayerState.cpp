@@ -10,7 +10,7 @@ void ASCPlayerState::BeginPlay()
 	Super::BeginPlay();
 	if (Role == ROLE_Authority)
 	{
-		CurrentRoom = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>()->InitialRoom;
+		//CurrentRoomName = FName("Error Room");
 	}
 }
 
@@ -20,40 +20,7 @@ void ASCPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	DOREPLIFETIME(ASCPlayerState, CurrentHealth);
 	DOREPLIFETIME(ASCPlayerState, MaxHealth);
-	DOREPLIFETIME_CONDITION(ASCPlayerState, CurrentRoom, COND_OwnerOnly);
-}
-
-void ASCPlayerState::SetCurrentLife(int _lives)
-{
-	CurrentHealth = _lives;
-}
-
-void ASCPlayerState::SetMaxLife(int _lives)
-{
-	MaxHealth = _lives;
-}
-
-void ASCPlayerState::SetCurrentRoom_Implementation(ABaseRoom* room)
-{
-	CurrentRoom = room;
-}
-bool ASCPlayerState::SetCurrentRoom_Validate(ABaseRoom* room)
-{
-	return true;
-}
-
-
-int ASCPlayerState::GetCurrentHealth() const
-{
-	return CurrentHealth;
-}
-
-int ASCPlayerState::GetMaxHealth() const
-{
-	return MaxHealth;
-}
-
-ABaseRoom* ASCPlayerState::GetCurrentRoom() const
-{
-	return CurrentRoom;
+	DOREPLIFETIME(ASCPlayerState, CurrentRoomName);
+	DOREPLIFETIME(ASCPlayerState, CurrentObjective);
+	DOREPLIFETIME(ASCPlayerState, TotalObjective);
 }

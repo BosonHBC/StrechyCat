@@ -36,45 +36,58 @@ void AObjectiveItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AObjectiveItemBase, isCompleted)
+	DOREPLIFETIME(AObjectiveItemBase, CompletedPlayer)
 }
 
-bool AObjectiveItemBase::UncompleteObjective_Validate(ASCBaseController* playerController)
-{
-	return true;
-}
-
-bool AObjectiveItemBase::CompleteObjective_Validate(ASCBaseController* playerController)
-{
-	return true;
-}
 
 void AObjectiveItemBase::CompleteObjective_Implementation(ASCBaseController* playerController)
 {
-	AStretchyCatGameMode* GM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-	if (GM != nullptr)
+	if (Role == ROLE_Authority && !isCompleted)
 	{
-		if (!isCompleted)
+		isCompleted = true;
+		CompletedPlayer = playerController;
+		auto GM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
+		if (GM)
 		{
-			isCompleted = true;
-			auto playerState = playerController->GetPlayerState<ASCPlayerState>();
+			GM->IncCurrentObjectiveCount(RoomAttached);
+			UE_LOG(LogTemp, Warning, TEXT("GM Obj ++"));
+
+		}
+		if (playerController->IsLocalController())
+		{
+			playerController->ChangeCurrentRoomObjective(1);
 			UE_LOG(LogTemp, Warning, TEXT("CompleteObjective"));
-			GM->IncCurrentObjectiveCount(playerState->GetCurrentRoom());
 		}
 	}
-	
 }
 
+bool AObjectiveItemBase::CompleteObjective_Validate(ASCBaseController * playerController)
+{
+	return true;
+}
+
+bool AObjectiveItemBase::UncompleteObjective_Validate(ASCBaseController * playerController)
+{
+	return true;
+}
 void AObjectiveItemBase::UncompleteObjective_Implementation(ASCBaseController* playerController)
 {
-	AStretchyCatGameMode* GM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-	if (GM != nullptr)
+
+	if (Role == ROLE_Authority && CompletedPlayer == playerController)
 	{
-		if (isCompleted)
+		isCompleted = false;
+		CompletedPlayer = nullptr;
+		auto GM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
+		if (GM)
 		{
-			isCompleted = false;
-			auto playerState = playerController->GetPlayerState<ASCPlayerState>();
+			GM->DecCurrentObjectiveCount(RoomAttached);
+			UE_LOG(LogTemp, Warning, TEXT("GM Obj --"));
+
+		}
+		if (playerController->IsLocalController())
+		{
+			playerController->ChangeCurrentRoomObjective(-1);
 			UE_LOG(LogTemp, Warning, TEXT("UNCompleteObjective"));
-			GM->DecCurrentObjectiveCount(playerState->GetCurrentRoom());
 		}
 	}
 }

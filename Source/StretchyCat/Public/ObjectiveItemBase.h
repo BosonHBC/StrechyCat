@@ -13,6 +13,9 @@ class STRETCHYCAT_API AObjectiveItemBase : public AActor
 
 	UPROPERTY(Replicated, VisibleAnywhere, Category = "Objective")
 	bool isCompleted;
+
+	UPROPERTY(Replicated, VisibleAnywhere, Category = "Objective")
+	class ASCBaseController * CompletedPlayer;
 public:	
 	// Sets default values for this actor's properties
 	AObjectiveItemBase();
@@ -24,6 +27,8 @@ protected:
 public:	
 	// Called every frame                          
 	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(VisibleAnywhere, Category = "Room")
+	class ABaseRoom * RoomAttached;
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation, Category = "Objective")
@@ -32,4 +37,5 @@ public:
 	void UncompleteObjective(class ASCBaseController* playerController);
 	UFUNCTION(BlueprintCallable, Category = "Objective")
 	bool GetIfCompleted() const { return isCompleted; }
+
 };

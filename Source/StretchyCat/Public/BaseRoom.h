@@ -40,15 +40,15 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION()
 	virtual void EnterTheRoom(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION()
 	virtual void LeaveTheRoom(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay")
-	void OnRoomComplete();
+	//UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay")
+	//void OnRoomComplete();
 };

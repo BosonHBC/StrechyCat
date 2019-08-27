@@ -18,7 +18,12 @@ public:
 	ASCBaseController();
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "CharacterSelect")
 	void SelectCharacterClass(TSubclassOf<class ASCCharacterBase> selectedClass);
-
+	UFUNCTION(Server, Reliable, WithValidation, Category = "Gameplay")
+	void ChangeCurrentRoomName(const FName& roomName);
+	UFUNCTION(Server, Reliable, WithValidation, Category = "Gameplay")
+	void ChangeCurrentRoomObjective(int obj);
+	UFUNCTION(Server, Reliable, WithValidation, Category = "Gameplay")
+	void ChangeMaxRoomObjective(int obj);
 	UFUNCTION(BlueprintImplementableEvent, Category = "UIShowMessage")
 	void ShowServerMessage(const FText & message);
 };
