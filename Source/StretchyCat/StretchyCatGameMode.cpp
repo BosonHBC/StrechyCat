@@ -28,6 +28,7 @@ void AStretchyCatGameMode::BeginPlay()
 	}
 	if(InitialRoom == nullptr)
 		InitialRoom = Cast<ABaseRoom>(GetWorld()->SpawnActor(InitialRoomClass));
+	CurrentSharedLife = MaxSharedLife;
 
 }
 
@@ -56,6 +57,7 @@ AStretchyCatGameMode::AStretchyCatGameMode()
 	//{
 	//	DefaultPawnClass = PlayerPawnBPClass.Class;
 	//}
+	MaxSharedLife = 4;
 	CurrentSharedLife = MaxSharedLife;
 }
 
