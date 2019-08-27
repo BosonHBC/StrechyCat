@@ -17,26 +17,22 @@ ABaseRoom::ABaseRoom()
 	PrimaryActorTick.bCanEverTick = true;
 	RoomFloor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RoomFloor"));
 	RootComponent = RoomFloor;
-	RoomEntrance = CreateDefaultSubobject<UBoxComponent>(TEXT("Entrance"));
-	RoomExit = CreateDefaultSubobject<UBoxComponent>(TEXT("Exit"));
-	RoomEntrance->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	RoomEntrance->SetCollisionResponseToAllChannels(ECR_Ignore);
-	RoomEntrance->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	RoomEntrance->SetupAttachment(RoomFloor);
+	RoomVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("RoomVolume"));
+	RoomSpawn = CreateDefaultSubobject<UBoxComponent>(TEXT("CharacterSpawn"));
+	RoomVolume->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	RoomVolume->SetCollisionResponseToAllChannels(ECR_Ignore);
+	RoomVolume->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	RoomVolume->SetupAttachment(RoomFloor);
+	RoomSpawn->SetupAttachment(RoomFloor);
 	
-	RoomExit->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	RoomExit->SetCollisionResponseToAllChannels(ECR_Ignore);
-	RoomExit->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	RoomExit->SetupAttachment(RoomFloor);
 	
-	RoomEntrance->OnComponentBeginOverlap.AddDynamic(this, &ABaseRoom::EnterTheRoom);
-	RoomExit->OnComponentEndOverlap.AddDynamic(this, &ABaseRoom::LeaveTheRoom);
+	RoomVolume->OnComponentBeginOverlap.AddDynamic(this, &ABaseRoom::EnterTheRoom);
+	RoomVolume->OnComponentEndOverlap.AddDynamic(this, &ABaseRoom::LeaveTheRoom);
 
 	SetReplicates(true);
 	IsRoomCompleted = false;
 	CurrentObjectiveCount = 0;
 	TotalObjectives = 0;
-	PlayerSpawnLocation = FVector(0.0f, 0.0f, 0.0f);
 
 	//add default event
 	OnCompleteRoom.BindUFunction(this, TEXT("OnRoomComplete"));

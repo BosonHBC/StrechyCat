@@ -27,6 +27,7 @@ public:
 	
 	void SetCurrentLife(int _lives);
 	void SetMaxLife(int _lives);
+	UFUNCTION(Server, Reliable, WithValidation, Category = "PlayerInfo")
 	void SetCurrentRoom(class ABaseRoom* room);
 	UFUNCTION(BlueprintCallable)
 	int GetCurrentHealth() const;

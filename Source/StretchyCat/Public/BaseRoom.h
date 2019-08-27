@@ -18,9 +18,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
 	FName RoomName;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	class UBoxComponent* RoomEntrance;
+		class UBoxComponent* RoomVolume;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	class UBoxComponent* RoomExit;
+	class UBoxComponent* RoomSpawn;
 	// Sets default values for this actor's properties
 	ABaseRoom();
 	DECLARE_DELEGATE(RoomDelegate)
@@ -35,8 +35,6 @@ public:
 	int TotalObjectives;
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Info")
 	bool IsRoomCompleted;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
-	FVector PlayerSpawnLocation;
 
 
 protected:

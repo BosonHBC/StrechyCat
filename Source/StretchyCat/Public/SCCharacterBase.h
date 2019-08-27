@@ -81,6 +81,7 @@ protected:
 
 	void StartInvincible(AActor* DmgFrom);
 	// invincible 
+	UPROPERTY(Replicated)
 	bool bInvincible;
 public:
 	// Called every frame

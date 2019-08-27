@@ -38,4 +38,7 @@ public:
 	void MulticastFireProjetile();
 
 	void ToggleShooting(bool _enable);
+
+	UPROPERTY(EditInstanceOnly, Category = Gameplay)
+		float BulletSpawnLifeTime;
 };

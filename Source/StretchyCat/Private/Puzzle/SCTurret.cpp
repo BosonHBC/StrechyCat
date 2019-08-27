@@ -18,7 +18,7 @@ ASCTurret::ASCTurret()
 	SpawnLocationComp->SetupAttachment(MeshComp);
 
 	ShootingInterval = 0.2f;
-
+	BulletSpawnLifeTime = 2.f;
 	SetReplicates(true);
 	SetReplicateMovement(true);
 }
@@ -50,7 +50,8 @@ void ASCTurret::MulticastFireProjetile_Implementation()
 		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
 		// spawn the projectile at the muzzle
-		GetWorld()->SpawnActor<ASCBulletProjectile>(ProjectileClass, SpawnLocation, SpawnLocationComp->GetComponentRotation(), ActorSpawnParams);
+		ASCBulletProjectile* projtile = GetWorld()->SpawnActor<ASCBulletProjectile>(ProjectileClass, SpawnLocation, SpawnLocationComp->GetComponentRotation(), ActorSpawnParams);
+		projtile->InitialLifeSpan = BulletSpawnLifeTime;
 	}
 
 }

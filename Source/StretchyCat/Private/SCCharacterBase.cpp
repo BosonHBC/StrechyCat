@@ -15,7 +15,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Materials/Material.h"
 #include "StretchyCatPlayerController.h"
-
+#include "Net/UnrealNetwork.h"
 // Sets default values
 ASCCharacterBase::ASCCharacterBase()
 {
@@ -109,13 +109,16 @@ void ASCCharacterBase::Jump()
 
 void ASCCharacterBase::TakeDamage(AActor* DmgFrom, int _dmg)
 {
-	if (Role == ROLE_Authority)
-	{
-		AStretchyCatGameMode * scGM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-		//scGM->GetDamage(_dmg);
+	if (!bInvincible) {
+		if (Role == ROLE_Authority)
+		{
+			AStretchyCatGameMode * scGM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
+			scGM->GetDamage(_dmg);
+		}
+		UE_LOG(LogTemp, Log, TEXT("%s is attacking by %s"), *GetName(), *DmgFrom->GetName());
+		StartInvincible(DmgFrom);
+		OnTakeDamage(DmgFrom);
 	}
-	StartInvincible(DmgFrom);
-	OnTakeDamage(DmgFrom);
 }
 
 
@@ -230,3 +233,8 @@ void ASCCharacterBase::LookUpAtRate(float _value)
 	AddControllerPitchInput(_value * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
+void ASCCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ASCCharacterBase, bInvincible);
+}
