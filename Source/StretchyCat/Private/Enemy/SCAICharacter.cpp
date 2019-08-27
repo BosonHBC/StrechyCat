@@ -28,7 +28,7 @@ ASCAICharacter::ASCAICharacter()
 void ASCAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	PawnSeningComp->OnSeePawn.AddDynamic(this, &ASCAICharacter::OnPawnSeen);
+	//PawnSeningComp->OnSeePawn.AddDynamic(this, &ASCAICharacter::OnPawnSeen);
 
 	InitialLocation = GetActorLocation();
 	InitialRotation = GetActorRotation();
@@ -47,6 +47,12 @@ void ASCAICharacter::Tick(float DeltaTime)
 	{
 		detectCD = 0;
 	}
+}
+
+void ASCAICharacter::KillMyself()
+{
+	if(Role == ROLE_Authority)
+	Destroy();
 }
 
 void ASCAICharacter::OnHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -94,6 +100,7 @@ void ASCAICharacter::ResetAI()
 	bDetecting = false;
 	detectCD = 3;
 	MoveToLocation(InitialLocation);
+	
 }
 
 void ASCAICharacter::OnNotHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)

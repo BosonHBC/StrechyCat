@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "SCCharacterBase.h"
 #include "SCSpinTurtle.h"
+#include "SCAICharacter.h"
 // Sets default values
 ASCBulletProjectile::ASCBulletProjectile()
 {
@@ -75,7 +76,10 @@ void ASCBulletProjectile::OnHit(UPrimitiveComponent* OverlappedComp, AActor* Oth
 			}
 		}
 		else {
-			Destroy();
+			ASCAICharacter* AIBase = Cast<ASCAICharacter>(OtherActor);
+			
+
+			//Destroy();
 		}
 	}
 }
