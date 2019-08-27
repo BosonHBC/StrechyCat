@@ -79,7 +79,8 @@ void ASCAICharacter::OnPawnSeen(APawn* Pawn)
 void ASCAICharacter::MoveToLocation(FVector _Location)
 {
 	AAIController* atCtrl = Cast<AAIController>(GetController());
-	atCtrl->MoveToLocation(_Location, 10.f);
+	if(atCtrl)
+	atCtrl->MoveToLocation(_Location);
 
 }
 
