@@ -34,7 +34,7 @@ ASCBulletProjectile::ASCBulletProjectile()
 	ProjectileMovement->bShouldBounce = true;
 
 	// Die after 3 seconds by default
-	InitialLifeSpan = 3.0f;
+	InitialLifeSpan = 2.0f;
 
 	SetReplicates(true);
 	SetReplicateMovement(true);
@@ -77,9 +77,11 @@ void ASCBulletProjectile::OnHit(UPrimitiveComponent* OverlappedComp, AActor* Oth
 		}
 		else {
 			ASCAICharacter* AIBase = Cast<ASCAICharacter>(OtherActor);
-			
 
-			//Destroy();
+			if (AIBase) {
+				AIBase->KillMyself();
+			}
+			Destroy();
 		}
 	}
 }
