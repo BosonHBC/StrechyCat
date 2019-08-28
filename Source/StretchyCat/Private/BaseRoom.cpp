@@ -16,17 +16,19 @@ ABaseRoom::ABaseRoom()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	RoomEntrance = CreateDefaultSubobject<UBoxComponent>(TEXT("RoomEntrance"));
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RoomRoot"));
+	RoomEntrance = CreateDefaultSubobject<UBoxComponent>(TEXT("RoomEntrance"));
 	RoomExit = CreateDefaultSubobject<UBoxComponent>(TEXT("RoomExit"));
 	RoomSpawn = CreateDefaultSubobject<UBoxComponent>(TEXT("CharacterSpawn"));
 	RoomEntrance->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-//	RoomVolume->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
 	RoomEntrance->SetCollisionResponseToAllChannels(ECR_Ignore);
 	RoomEntrance->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	RoomEntrance->SetupAttachment(RootComponent);
 	RoomSpawn->SetupAttachment(RootComponent);
-	
+	RoomExit->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	RoomExit->SetCollisionResponseToAllChannels(ECR_Ignore);
+	RoomExit->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	RoomExit->SetupAttachment(RootComponent);
 	
 	RoomEntrance->OnComponentBeginOverlap.AddDynamic(this, &ABaseRoom::EnterTheRoom);
 	RoomExit->OnComponentEndOverlap.AddDynamic(this, &ABaseRoom::LeaveTheRoom);
@@ -144,5 +146,15 @@ bool ABaseRoom::UncompleteObjective(int objNum)
 	if (OnUncompleteObjective.IsBound())
 		OnUncompleteObjective.Execute(objNum);
 	return true;
+}
+
+AObjectiveItemBase * ABaseRoom::GetAnUncompleteObjective() const
+{
+	for (auto a : AllObjectives)
+	{
+		if (!a->GetIfCompleted())
+			return a;
+	}
+	return nullptr;
 }
 

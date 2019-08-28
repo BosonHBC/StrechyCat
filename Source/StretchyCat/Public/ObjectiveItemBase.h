@@ -30,6 +30,9 @@ public:
 	void CompleteObjective(class ASCBaseController * playerController);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Objective")
 	void UncompleteObjective(class ASCBaseController* playerController);
+
+	UFUNCTION(BlueprintCallable, Category = "Objective")
+	void CompleteItself();
 	UFUNCTION(BlueprintCallable,  Category = "Objective")
 	bool GetIfCompleted() const { return isCompleted; }
 	//The room the item obj is in

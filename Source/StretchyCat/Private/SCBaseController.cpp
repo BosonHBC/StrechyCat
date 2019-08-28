@@ -32,14 +32,12 @@ void ASCBaseController::CompleteObjective(ABaseRoom * room)
 {
 	if (room->CompleteObjective(1))
 	{
-		ASCPlayerState * PS = GetPlayerState<ASCPlayerState>();
-		//PS->CurrentObjective++;
-
 		if (Role == ROLE_Authority)
 		{
 			auto gs = GetWorld()->GetGameState<ASCGameState>();
 			if (gs)
 			{
+				ASCPlayerState * PS = GetPlayerState<ASCPlayerState>();
 				gs->PlayerCompleteObjective(room, 1);
 				gs->SendMessageToUI(FText::FromString(TEXT("Player " + PS->GetPlayerName() + " Compelete Obj in Room " + room->RoomName.ToString())));
 			}
@@ -51,14 +49,12 @@ void ASCBaseController::UncompleteObjective(ABaseRoom * room)
 {
 	if (room->UncompleteObjective(1))
 	{
-		ASCPlayerState * PS = GetPlayerState<ASCPlayerState>();
-		//PS->CurrentObjective--;
-
 		if (Role == ROLE_Authority)
 		{
 			auto gs = GetWorld()->GetGameState<ASCGameState>();
 			if (gs)
 			{
+				ASCPlayerState * PS = GetPlayerState<ASCPlayerState>();
 				gs->PlayerCompleteObjective(room, -1);
 				gs->SendMessageToUI(FText::FromString(TEXT("Player " + PS->GetPlayerName() + " Uncompelete Obj in Room " + room->RoomName.ToString())));
 			}

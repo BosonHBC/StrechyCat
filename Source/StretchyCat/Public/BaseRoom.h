@@ -18,7 +18,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
 	FName RoomName;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-		class UBoxComponent* RoomExit;
+	class UBoxComponent* RoomExit;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UBoxComponent* RoomSpawn;
 	// Sets default values for this actor's properties
@@ -54,4 +54,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay")
 	void OnRoomComplete();
+
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	class AObjectiveItemBase * GetAnUncompleteObjective() const;
 };

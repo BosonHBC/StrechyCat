@@ -8,6 +8,7 @@
 #include "SCBaseController.h"
 #include "SCPlayerState.h"
 #include "BaseRoom.h"
+#include "SCGameState.h"
 // Sets default values
 AObjectiveItemBase::AObjectiveItemBase()
 {
@@ -35,6 +36,27 @@ void AObjectiveItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AObjectiveItemBase, isCompleted)
+}
+
+void AObjectiveItemBase::CompleteItself()
+{
+	if (!isCompleted)
+	{
+		isCompleted = true;
+		UE_LOG(LogTemp, Warning, TEXT("CompleteItself"));
+		if (ItemRoom->CompleteObjective(1))
+		{
+			if (Role == ROLE_Authority)
+			{
+				auto gs = GetWorld()->GetGameState<ASCGameState>();
+				if (gs)
+				{
+					gs->PlayerCompleteObjective(ItemRoom, 1);
+					gs->SendMessageToUI(FText::FromString(TEXT("A potato just compeleted Obj in Room " + ItemRoom->RoomName.ToString())));
+				}
+			}
+		}
+	}
 }
 
 
