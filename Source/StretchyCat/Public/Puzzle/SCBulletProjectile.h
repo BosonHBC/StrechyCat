@@ -31,4 +31,7 @@ public:
 	FORCEINLINE class USphereComponent* GetCollisionComp() const { return CollisionComp; }
 
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void BeforeDestroyEvent(AActor* OtherActor);
 };

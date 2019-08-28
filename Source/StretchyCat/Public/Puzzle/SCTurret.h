@@ -23,7 +23,7 @@ public:
 		bool bCanSpawnProjectile;
 	UPROPERTY(VisibleDefaultsOnly, Category = Gameplay)
 		class USceneComponent* SpawnLocationComp;
-	UPROPERTY(EditInstanceOnly, Category = Gameplay)
+	UPROPERTY(EditAnywhere, Category = Gameplay)
 		float ShootingInterval;
 protected:
 	// Called when the game starts or when spawned
@@ -39,6 +39,6 @@ public:
 
 	void ToggleShooting(bool _enable);
 
-	UPROPERTY(EditInstanceOnly, Category = Gameplay)
+	UPROPERTY(EditAnywhere, Category = Gameplay)
 		float BulletSpawnLifeTime;
 };
