@@ -4,6 +4,7 @@
 #include "SCCharacterBase.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ASCInteractableBase::ASCInteractableBase()
@@ -33,20 +34,29 @@ void ASCInteractableBase::Tick(float DeltaTime)
 
 void ASCInteractableBase::DoInteraction(ASCCharacterBase* ownActor)
 {
-	// Base Interaction
-	UE_LOG(LogTemp, Log, TEXT("Interact by %s"), *ownActor->GetName());
+
 }
 
 void ASCInteractableBase::CancelInteraction()
 {
-	// Base Cancel Interaction
-	UE_LOG(LogTemp, Log, TEXT("Cancel Interaction"));
 
+}
+
+void ASCInteractableBase::MulticastCancelInteraction_Implementation()
+{
+
+}
+
+void ASCInteractableBase::MulticastDoInteraction_Implementation(class ASCCharacterBase* ownActor)
+{
+	OnDoInteractionBP(ownActor);
 }
 
 void ASCInteractableBase::ServerCancelInteraction_Implementation()
 {
-
+	// Base Cancel Interaction
+	UE_LOG(LogTemp, Log, TEXT("Cancel Interaction"));
+	MulticastCancelInteraction();
 }
 
 bool ASCInteractableBase::ServerCancelInteraction_Validate()
@@ -56,7 +66,9 @@ bool ASCInteractableBase::ServerCancelInteraction_Validate()
 
 void ASCInteractableBase::ServerDoInteraction_Implementation(class ASCCharacterBase* ownActor)
 {
-
+	// Base Interaction
+	UE_LOG(LogTemp, Log, TEXT("Interact by %s"), *ownActor->GetName());
+	MulticastDoInteraction(ownActor);
 }
 
 bool ASCInteractableBase::ServerDoInteraction_Validate(class ASCCharacterBase* ownActor)
@@ -64,3 +76,9 @@ bool ASCInteractableBase::ServerDoInteraction_Validate(class ASCCharacterBase* o
 	return true;
 }
 
+void ASCInteractableBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASCInteractableBase, bOneTimeInteractObj);
+}

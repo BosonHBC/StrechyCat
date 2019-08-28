@@ -14,6 +14,8 @@
 #include "TimerManager.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Materials/Material.h"
+#include "Materials/MaterialInstance.h"
+
 #include "StretchyCatPlayerController.h"
 #include "Net/UnrealNetwork.h"
 // Sets default values
@@ -45,8 +47,8 @@ ASCCharacterBase::ASCCharacterBase()
 	InteractionPoint = CreateDefaultSubobject<USceneComponent>(TEXT("InteractPoint"));
 	bInteracting = false;
 
-	NormalMaterial = CreateDefaultSubobject<UMaterial>(TEXT("NormalMaterial"));
-	InvinceMaterial = CreateDefaultSubobject<UMaterial>(TEXT("InvinceMaterial"));
+	//NormalMaterial = CreateDefaultSubobject<UMaterial>(TEXT("NormalMaterial"));
+	//InvinceMaterial = CreateDefaultSubobject<UMaterialInstance>(TEXT("InvinceMaterial"));
 
 	InvinceTime = 3.f;
 
@@ -134,6 +136,26 @@ void ASCCharacterBase::Interact()
 	ServerInteract();
 }
 
+void ASCCharacterBase::UnInteract()
+{
+	ServerUnInteract();
+}
+
+void ASCCharacterBase::ServerUnInteract_Implementation()
+{
+	if (bInteracting && InteractingActor != nullptr) {
+		if (InteractingActor->bOneTimeInteractObj) {
+			InteractingActor->ServerCancelInteraction();
+			bInteracting = false;
+		}
+	}
+}
+
+bool ASCCharacterBase::ServerUnInteract_Validate()
+{
+	return true;
+}
+
 void ASCCharacterBase::ServerInteract_Implementation()
 {
 	// Base Interact
@@ -155,7 +177,8 @@ bool ASCCharacterBase::ServerInteract_Validate()
 void ASCCharacterBase::OnInvinceTimeOver()
 {
 	bInvincible = false;
-	GetMesh()->SetMaterial(0, NormalMaterial);
+	//GetMesh()->SetMaterial(0, NormalMaterial);
+	
 	EnableInput(nullptr);
 
 	// Temp Position
@@ -169,7 +192,7 @@ void ASCCharacterBase::StartInvincible(AActor* DmgFrom)
 	GetWorldTimerManager().SetTimer(InvinceTimeHandle, this,&ASCCharacterBase::OnInvinceTimeOver, InvinceTime, false);
 	bInvincible = true;
 	// Change Material
-	GetMesh()->SetMaterial(0, InvinceMaterial);
+	//GetMesh()->SetMaterial(0, InvinceMaterial);
 	//Set Knock back
 	FVector DmgImpulse = ((GetActorLocation() - DmgFrom->GetActorLocation()).GetSafeNormal() - GetActorForwardVector())* DmgFrom->GetVelocity().Size() * 20.f;
 	GetCharacterMovement()->AddImpulse(DmgImpulse);
@@ -219,6 +242,7 @@ void ASCCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCCharacterBase::Jump);
 
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ASCCharacterBase::Interact);
+	PlayerInputComponent->BindAction("Interact", IE_Released, this, &ASCCharacterBase::UnInteract);
 }
 
 void ASCCharacterBase::TurnAtRate(float _value)

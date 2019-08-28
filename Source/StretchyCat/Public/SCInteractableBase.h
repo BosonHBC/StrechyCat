@@ -17,6 +17,9 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Componetns")
 		class UStaticMeshComponent* SuperMesh;
 
+	UPROPERTY(Replicated, EditInstanceOnly,Category = Gameplay)
+	bool bOneTimeInteractObj;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -33,4 +36,12 @@ public:
 	virtual void ServerDoInteraction(class ASCCharacterBase* ownActor);
 	UFUNCTION(Server, Reliable, WithValidation)
 	virtual void ServerCancelInteraction();
+
+	UFUNCTION(NetMulticast, Reliable)
+		virtual void MulticastDoInteraction(class ASCCharacterBase* ownActor);
+	UFUNCTION(NetMulticast, Reliable)
+		virtual void MulticastCancelInteraction();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = Gameplay)
+	void OnDoInteractionBP(class ASCCharacterBase* ownActor);
 };

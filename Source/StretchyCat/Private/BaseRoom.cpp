@@ -20,6 +20,7 @@ ABaseRoom::ABaseRoom()
 	RoomVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("RoomVolume"));
 	RoomSpawn = CreateDefaultSubobject<UBoxComponent>(TEXT("CharacterSpawn"));
 	RoomVolume->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+//	RoomVolume->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
 	RoomVolume->SetCollisionResponseToAllChannels(ECR_Ignore);
 	RoomVolume->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	RoomVolume->SetupAttachment(RoomFloor);

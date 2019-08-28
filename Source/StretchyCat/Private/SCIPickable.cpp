@@ -55,7 +55,6 @@ void ASCIPickable::ServerCancelInteraction_Implementation()
 
 void ASCIPickable::MulticastDoInteraction_Implementation(class ASCCharacterBase* ownActor)
 {
-
 	SuperMesh->SetEnableGravity(false);
 	UE_LOG(LogTemp, Log, TEXT("Multicast interaction"));
 }
@@ -69,6 +68,7 @@ void ASCIPickable::MulticastCancelInteraction_Implementation()
 void ASCIPickable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
 	DOREPLIFETIME(ASCIPickable, bHolding);
 	DOREPLIFETIME(ASCIPickable, PickPointSceneComp);
 }

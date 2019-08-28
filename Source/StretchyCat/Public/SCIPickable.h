@@ -7,13 +7,13 @@
 #include "SCIPickable.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STRETCHYCAT_API ASCIPickable : public ASCInteractableBase
 {
 	GENERATED_BODY()
-	
+
 public:
 	ASCIPickable();
 
@@ -22,9 +22,9 @@ protected:
 
 
 	UPROPERTY(Replicated)
-	class USceneComponent* PickPointSceneComp;
+		class USceneComponent* PickPointSceneComp;
 	UPROPERTY(Replicated)
-	bool bHolding;
+		bool bHolding;
 
 	void DoInteraction(class ASCCharacterBase* ownActor) override;
 
@@ -37,8 +37,6 @@ public:
 	virtual void ServerDoInteraction_Implementation(class ASCCharacterBase* ownActor) override;
 	virtual void ServerCancelInteraction_Implementation() override;
 
-	UFUNCTION(NetMulticast, Reliable)
-		virtual void MulticastDoInteraction(class ASCCharacterBase* ownActor);
-	UFUNCTION(NetMulticast, Reliable)
-		virtual void MulticastCancelInteraction();
+	virtual void MulticastDoInteraction_Implementation(class ASCCharacterBase* ownActor) override;
+	virtual void MulticastCancelInteraction_Implementation() override; 
 };

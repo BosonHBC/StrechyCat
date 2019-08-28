@@ -61,10 +61,13 @@ protected:
 	virtual void Interact();
 	UFUNCTION(Server, Reliable, WithValidation)
 		virtual void ServerInteract();
+	virtual void UnInteract();
+	UFUNCTION(Server, Reliable, WithValidation)
+		virtual void ServerUnInteract();
 
 	UPROPERTY(VisibleAnywhere, Category = "Gameplay")
 		class ASCInteractableBase* InteractingActor;
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+	UPROPERTY(BlueprintReadWrite , Category = "Gameplay")
 		float InvinceTime;
 
 	FTimerHandle InvinceTimeHandle;
@@ -74,10 +77,11 @@ protected:
 	bool bCarryingActor;
 	FCollisionQueryParams CollisionParams;
 
-	UPROPERTY(EditDefaultsOnly)
-		class UMaterial* NormalMaterial;
-	UPROPERTY(EditDefaultsOnly)
-		class UMaterial* InvinceMaterial;
+	//UPROPERTY(EditDefaultsOnly)
+	//	class UMaterial* NormalMaterial;
+	//UPROPERTY(EditDefaultsOnly)
+	//	class UMaterial* InvinceMaterial;
+
 
 	void StartInvincible(AActor* DmgFrom);
 	// invincible 
