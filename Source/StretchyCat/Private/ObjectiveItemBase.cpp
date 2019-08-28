@@ -21,7 +21,6 @@ AObjectiveItemBase::AObjectiveItemBase()
 void AObjectiveItemBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 
@@ -38,53 +37,25 @@ void AObjectiveItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AObjectiveItemBase, isCompleted)
 }
 
-bool AObjectiveItemBase::UncompleteObjective_Validate(ASCBaseController* playerController)
-{
-	return true;
-}
-
-bool AObjectiveItemBase::CompleteObjective_Validate(ASCBaseController* playerController)
-{
-	return true;
-}
 
 void AObjectiveItemBase::CompleteObjective_Implementation(ASCBaseController* playerController)
 {
-	AStretchyCatGameMode* GM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-	if (GM != nullptr)
+	if (!isCompleted)
 	{
-		if (!isCompleted)
-		{
-			isCompleted = true;
-			auto playerState = playerController->GetPlayerState<ASCPlayerState>();
-			UE_LOG(LogTemp, Warning, TEXT("CompleteObjective"));
-			ABaseRoom * room = playerState->CurrentRoom;
-			
-			playerState->SetCurrentRoom(room, room->CurrentObjectiveCount + 1, room->TotalObjectives);
-		}
+		isCompleted = true;
+		if (playerController != nullptr)
+			playerController->CompleteObjective(ItemRoom);
 	}
-	
 }
 
 void AObjectiveItemBase::UncompleteObjective_Implementation(ASCBaseController* playerController)
 {
-	AStretchyCatGameMode* GM = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-	if (GM != nullptr)
+	if (isCompleted && !ItemRoom->IsRoomCompleted)
 	{
-		if (isCompleted)
+		isCompleted = false;
+		if (playerController != nullptr)
 		{
-			auto playerState = playerController->GetPlayerState<ASCPlayerState>();
-			ABaseRoom * room = playerState->CurrentRoom;
-			if (!room->IsRoomCompleted)
-			{
-				isCompleted = false;
-				UE_LOG(LogTemp, Warning, TEXT("UNCompleteObjective"));
-				playerState->SetCurrentRoom(room, room->CurrentObjectiveCount - 1, room->TotalObjectives);
-			}
-			else
-				UE_LOG(LogTemp, Warning, TEXT("CANNOT UNCompleteObjective BECAUSE ROOM COMPLETE"));
-
-				
+			playerController->UncompleteObjective(ItemRoom);
 		}
 	}
 }

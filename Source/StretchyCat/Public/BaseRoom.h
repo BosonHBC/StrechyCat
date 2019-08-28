@@ -12,13 +12,13 @@ class STRETCHYCAT_API ABaseRoom : public AActor
 	GENERATED_BODY()
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UStaticMeshComponent* RoomFloor;
-	UPROPERTY(Replicated, VisibleAnywhere, Category = "Components")
+	class UBoxComponent* RoomEntrance;
+	UPROPERTY(BlueprintReadWrite, Category = "Info")
 	TArray < class AObjectiveItemBase* > AllObjectives;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
 	FName RoomName;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-		class UBoxComponent* RoomVolume;
+		class UBoxComponent* RoomExit;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UBoxComponent* RoomSpawn;
 	// Sets default values for this actor's properties
@@ -40,14 +40,17 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION()
 	virtual void EnterTheRoom(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION()
 	virtual void LeaveTheRoom(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	virtual bool CompleteObjective(int objNum);
+	virtual bool UncompleteObjective(int objNum);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Gameplay")
 	void OnRoomComplete();

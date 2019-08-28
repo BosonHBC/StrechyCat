@@ -26,10 +26,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation, Category = "Objective")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category ="Objective")
 	void CompleteObjective(class ASCBaseController * playerController);
-	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation, Category = "Objective")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Objective")
 	void UncompleteObjective(class ASCBaseController* playerController);
-	UFUNCTION(BlueprintCallable, Category = "Objective")
+	UFUNCTION(BlueprintCallable,  Category = "Objective")
 	bool GetIfCompleted() const { return isCompleted; }
+	//The room the item obj is in
+	class ABaseRoom * ItemRoom;
+
 };

@@ -19,6 +19,11 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "CharacterSelect")
 	void SelectCharacterClass(TSubclassOf<class ASCCharacterBase> selectedClass);
 
+	void CompleteObjective(class ABaseRoom* room);
+	void UncompleteObjective(class ABaseRoom* room);
+	void EnterTheRoom(const FName & roomName, int curObj, int totalObj);
+	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterStatus")
+	void OnPlayerEnterRoom();
 	UFUNCTION(BlueprintImplementableEvent, Category = "UIShowMessage")
 	void ShowServerMessage(const FText & message);
 };

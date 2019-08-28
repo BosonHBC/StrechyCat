@@ -6,6 +6,7 @@
 #include "SCGameState.h"
 #include "ObjectiveItemBase.h"
 #include "SCCharacterBase.h"
+#include "SCBaseController.h"
 #include "SCPlayerState.h"
 #include "StretchyCatGameMode.h"
 #include <Net/UnrealNetwork.h>
@@ -15,22 +16,24 @@ ABaseRoom::ABaseRoom()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	RoomFloor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RoomFloor"));
-	RootComponent = RoomFloor;
-	RoomVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("RoomVolume"));
+	RoomEntrance = CreateDefaultSubobject<UBoxComponent>(TEXT("RoomEntrance"));
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RoomRoot"));
+	RoomExit = CreateDefaultSubobject<UBoxComponent>(TEXT("RoomExit"));
 	RoomSpawn = CreateDefaultSubobject<UBoxComponent>(TEXT("CharacterSpawn"));
-	RoomVolume->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	RoomEntrance->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 //	RoomVolume->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
-	RoomVolume->SetCollisionResponseToAllChannels(ECR_Ignore);
-	RoomVolume->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	RoomVolume->SetupAttachment(RoomFloor);
-	RoomSpawn->SetupAttachment(RoomFloor);
+	RoomEntrance->SetCollisionResponseToAllChannels(ECR_Ignore);
+	RoomEntrance->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	RoomEntrance->SetupAttachment(RootComponent);
+	RoomSpawn->SetupAttachment(RootComponent);
 	
 	
-	RoomVolume->OnComponentBeginOverlap.AddDynamic(this, &ABaseRoom::EnterTheRoom);
-	RoomVolume->OnComponentEndOverlap.AddDynamic(this, &ABaseRoom::LeaveTheRoom);
+	RoomEntrance->OnComponentBeginOverlap.AddDynamic(this, &ABaseRoom::EnterTheRoom);
+	RoomExit->OnComponentEndOverlap.AddDynamic(this, &ABaseRoom::LeaveTheRoom);
 
 	SetReplicates(true);
+	RoomEntrance->SetIsReplicated(true);
+	RoomExit->SetIsReplicated(true);
 	IsRoomCompleted = false;
 	CurrentObjectiveCount = 0;
 	TotalObjectives = 0;
@@ -43,72 +46,59 @@ ABaseRoom::ABaseRoom()
 void ABaseRoom::BeginPlay()
 {
 	Super::BeginPlay();
-	if (Role == ROLE_Authority)
+	TArray<AActor *> children;
+	GetAllChildActors(children);
+	UE_LOG(LogTemp, Warning, TEXT("Children count %d"), children.Num())
+	for (auto child : children)
 	{
-		TArray<AActor *> children;
-		GetAllChildActors(children);
-		UE_LOG(LogTemp, Warning, TEXT("Children count %d"), children.Num())
-			for (auto child : children)
-			{
-				auto castto = Cast<AObjectiveItemBase>(child);
-				if (castto)
-					AllObjectives.Add(castto);
-			}
-		TotalObjectives = AllObjectives.Num();
+		auto castto = Cast<AObjectiveItemBase>(child);
+		if (castto)
+		{
+			AllObjectives.Add(castto);
+			castto->ItemRoom = this;
+		}
 	}
+	TotalObjectives = AllObjectives.Num();
 }
 
-void ABaseRoom::EnterTheRoom_Implementation(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABaseRoom::EnterTheRoom(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	{
 		ASCCharacterBase* character = Cast<ASCCharacterBase>(OtherActor);
 		if (character != nullptr)
 		{
-			auto gm = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-			if (gm)
+			auto pc = character->GetController<ASCBaseController>();
+			if (pc)
 			{
-				auto ps = character->GetPlayerState<ASCPlayerState>();
-				if (ps)
+				pc->EnterTheRoom(RoomName, CurrentObjectiveCount, TotalObjectives);
+				if (Role == ROLE_Authority)
 				{
-					if (ps->GetCurrentRoom() != this)
-					{
-						ps->SetCurrentRoom(this, CurrentObjectiveCount, TotalObjectives);
-						gm->SendServerMessageToUI(FText::FromString(FString("Player " + ps->PlayerName + " Entered " + RoomName.ToString())));
-					}
+					GetWorld()->GetGameState<ASCGameState>()->SendMessageToUI(FText::FromString(TEXT("Player " + pc->GetPlayerState<ASCPlayerState>()->GetPlayerName() + " Entered room " + RoomName.ToString())));
 				}
 			}
 		}
 	}
 }
 
-bool ABaseRoom::EnterTheRoom_Validate(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	return true;
-}
-void ABaseRoom::LeaveTheRoom_Implementation(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void ABaseRoom::LeaveTheRoom(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	{
 		ASCCharacterBase* character = Cast<ASCCharacterBase>(OtherActor);
 		if (character != nullptr)
 		{
-			auto gm = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>();
-			if (gm)
+			auto pc = character->GetController<ASCBaseController>();
+			if (pc)
 			{
-				auto ps = character->GetPlayerState<ASCPlayerState>();
-				if (ps)
+				//pc->EnterTheRoom(CurrentObjectiveCount, TotalObjectives);
+				if (Role == ROLE_Authority)
 				{
-					if(ps->GetCurrentRoom() == this)
-						gm->SendServerMessageToUI(FText::FromString(FString("Player " + ps->PlayerName + " Left " + RoomName.ToString())));
+					GetWorld()->GetGameState<ASCGameState>()->SendMessageToUI(FText::FromString(TEXT("Player " + pc->GetPlayerState<ASCPlayerState>()->GetPlayerName() + " Left room " + RoomName.ToString())));
 				}
 			}
 		}
 	}
-}
-bool ABaseRoom::LeaveTheRoom_Validate(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	return true;
 }
 // Called every frame
 void ABaseRoom::Tick(float DeltaTime)
@@ -124,6 +114,35 @@ void ABaseRoom::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(ABaseRoom, TotalObjectives);
 	DOREPLIFETIME(ABaseRoom, CurrentObjectiveCount);
 	DOREPLIFETIME(ABaseRoom, IsRoomCompleted);
-	DOREPLIFETIME(ABaseRoom, AllObjectives);
+}
+
+bool ABaseRoom::CompleteObjective(int objNum)
+{
+	if (IsRoomCompleted)
+		return false;
+	if (CurrentObjectiveCount + objNum > TotalObjectives)
+		return false;
+	CurrentObjectiveCount += objNum;
+	if (OnCompleteObjective.IsBound())
+		OnCompleteObjective.Execute(objNum);
+
+	if (CurrentObjectiveCount == TotalObjectives)
+	{
+		IsRoomCompleted = true;
+		OnCompleteRoom.ExecuteIfBound();
+	}
+	return true;
+}
+
+bool ABaseRoom::UncompleteObjective(int objNum)
+{
+	if (IsRoomCompleted)
+		return false;
+	if (CurrentObjectiveCount - objNum < 0)
+		return false;
+	CurrentObjectiveCount -= objNum;
+	if (OnUncompleteObjective.IsBound())
+		OnUncompleteObjective.Execute(objNum);
+	return true;
 }
 

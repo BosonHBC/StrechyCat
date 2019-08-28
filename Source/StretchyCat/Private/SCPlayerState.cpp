@@ -9,10 +9,6 @@
 void ASCPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
-	if (Role == ROLE_Authority)
-	{
-		CurrentRoom = GetWorld()->GetAuthGameMode<AStretchyCatGameMode>()->InitialRoom;
-	}
 }
 
 void ASCPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -21,7 +17,9 @@ void ASCPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	DOREPLIFETIME(ASCPlayerState, CurrentHealth);
 	DOREPLIFETIME(ASCPlayerState, MaxHealth);
-	DOREPLIFETIME_CONDITION(ASCPlayerState, CurrentRoom, COND_OwnerOnly);
+	DOREPLIFETIME(ASCPlayerState, CurrentObjective);
+	DOREPLIFETIME(ASCPlayerState, TotalObjective);
+	DOREPLIFETIME(ASCPlayerState, RoomNamePlayerIn);
 }
 
 void ASCPlayerState::SetCurrentLife(int _lives)
@@ -34,13 +32,11 @@ void ASCPlayerState::SetMaxLife(int _lives)
 	MaxHealth = _lives;
 }
 
-void ASCPlayerState::SetCurrentRoom_Implementation(ABaseRoom* room, int curObj, int totObj)
+void ASCPlayerState::SetCurrentRoomObj_Implementation(const FName & roomName, int curObj, int totObj)
 {
-	CurrentRoom = room;
-		CurrentRoom->TotalObjectives = totObj;
-		CurrentRoom->CurrentObjectiveCount = curObj;
-		if (CurrentRoom->CurrentObjectiveCount == CurrentRoom->TotalObjectives)
-			CurrentRoom->IsRoomCompleted = true;
+	RoomNamePlayerIn = roomName;
+	CurrentObjective = curObj;
+	TotalObjective = totObj;
 }
 
 int ASCPlayerState::GetCurrentHealth() const
@@ -53,7 +49,3 @@ int ASCPlayerState::GetMaxHealth() const
 	return MaxHealth;
 }
 
-ABaseRoom* ASCPlayerState::GetCurrentRoom() const
-{
-	return CurrentRoom;
-}

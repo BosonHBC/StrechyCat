@@ -73,3 +73,18 @@ void ASCGameState::SendMessageToUI_Implementation(const FText& message)
 		}
 	}
 }
+
+void ASCGameState::PlayerCompleteObjective_Implementation(ABaseRoom * room, int objNum)
+{
+	for (auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		ASCPlayerState * scBC = It->Get()->GetPlayerState<ASCPlayerState>();
+		if (scBC)
+		{
+			if (scBC->RoomNamePlayerIn == room->RoomName)
+			{
+				scBC->CurrentObjective += objNum;
+			}
+		}
+	}
+}

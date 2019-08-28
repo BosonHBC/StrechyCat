@@ -36,6 +36,9 @@ public:
 	void ChangeLifeCount(int cur_health, int max_health);
 
 	UFUNCTION(NetMulticast, Reliable)
-		void SendMessageToUI(const FText & message);
-	//void SetGameObjective(int cur_obj, int max_obj);
+	void SendMessageToUI(const FText & message);
+
+	//objNum < 0 means uncomplete
+	UFUNCTION(NetMulticast, Reliable)
+	void PlayerCompleteObjective(class ABaseRoom * room, int objNum);
 };

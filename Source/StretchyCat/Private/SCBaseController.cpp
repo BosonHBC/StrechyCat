@@ -4,6 +4,9 @@
 #include "SCCharacterBase.h"
 #include "Engine/World.h"
 #include "StretchyCatGameMode.h"
+#include "SCPlayerState.h"
+#include "SCGameState.h"
+#include "BaseRoom.h"
 
 ASCBaseController::ASCBaseController()
 {
@@ -23,4 +26,55 @@ void ASCBaseController::SelectCharacterClass_Implementation(TSubclassOf<class AS
 bool ASCBaseController::SelectCharacterClass_Validate(TSubclassOf<class ASCCharacterBase> selectedClass)
 {
 	return true;
+}
+
+void ASCBaseController::CompleteObjective(ABaseRoom * room)
+{
+	if (room->CompleteObjective(1))
+	{
+		ASCPlayerState * PS = GetPlayerState<ASCPlayerState>();
+		//PS->CurrentObjective++;
+
+		if (Role == ROLE_Authority)
+		{
+			auto gs = GetWorld()->GetGameState<ASCGameState>();
+			if (gs)
+			{
+				gs->PlayerCompleteObjective(room, 1);
+				gs->SendMessageToUI(FText::FromString(TEXT("Player " + PS->GetPlayerName() + " Compelete Obj in Room " + room->RoomName.ToString())));
+			}
+		}
+	}
+}
+
+void ASCBaseController::UncompleteObjective(ABaseRoom * room)
+{
+	if (room->UncompleteObjective(1))
+	{
+		ASCPlayerState * PS = GetPlayerState<ASCPlayerState>();
+		//PS->CurrentObjective--;
+
+		if (Role == ROLE_Authority)
+		{
+			auto gs = GetWorld()->GetGameState<ASCGameState>();
+			if (gs)
+			{
+				gs->PlayerCompleteObjective(room, -1);
+				gs->SendMessageToUI(FText::FromString(TEXT("Player " + PS->GetPlayerName() + " Uncompelete Obj in Room " + room->RoomName.ToString())));
+			}
+		}
+	}
+}
+
+void ASCBaseController::EnterTheRoom(const FName& roomName, int curObj, int totalObj)
+{
+	ASCPlayerState * playerState = GetPlayerState<ASCPlayerState>();
+	if (playerState)
+	{
+		playerState->RoomNamePlayerIn = roomName;
+		playerState->CurrentObjective = curObj;
+		playerState->TotalObjective = totalObj;
+		OnPlayerEnterRoom();
+	}
+
 }
