@@ -82,6 +82,7 @@ void ASCBulletProjectile::OnHit(UPrimitiveComponent* OverlappedComp, AActor* Oth
 			if (AIBase) {
 				AIBase->KillMyself();
 			}
+			BeforeDestroyEvent(OtherActor);
 			Destroy();
 		}
 	}
