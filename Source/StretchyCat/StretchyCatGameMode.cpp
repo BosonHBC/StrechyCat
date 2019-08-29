@@ -76,12 +76,15 @@ void AStretchyCatGameMode::CreateSelectedPawn_Implementation(TSubclassOf<ASCChar
 {
 	auto oldPawn = playerController->GetPawn();
 
-	auto newCharacter = GetWorld()->SpawnActor<ASCCharacterBase>(selectedCharacter, InitialRoom->RoomSpawn->GetComponentLocation(), FRotator(0.0f, 0.0f, 0.0f), FActorSpawnParameters());
-	if (newCharacter != nullptr && oldPawn)
+	if (oldPawn)
 	{
-		GetWorld()->DestroyActor(oldPawn);
-		playerController->Possess(newCharacter);
-
+		//hard code location lol
+		auto newCharacter = GetWorld()->SpawnActor<ASCCharacterBase>(selectedCharacter, oldPawn->GetActorLocation()+FVector(0.0f, 0.0f, 200.0f), FRotator(0.0f, 0.0f, 0.0f), FActorSpawnParameters());
+		if (newCharacter != nullptr)
+		{
+			GetWorld()->DestroyActor(oldPawn);
+			playerController->Possess(newCharacter);
+		}
 	}
 	else
 		SendServerMessageToUI(FText::FromString(TEXT("Character cannot spawn at the moment.")));
