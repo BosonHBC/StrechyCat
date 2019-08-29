@@ -117,7 +117,7 @@ void ASCStretchyCat::OnBodyReachDest()
 		ASCInteractableBase* ReceivedActor =  Cast<ASCInteractableBase>(HeadHitActor);
 		UE_LOG(LogTemp, Log, TEXT("Name: %s"), *HeadHitActor->GetName());
 		if (ReceivedActor) {
-			ReceivedActor->SuperMesh->AddImpulse((HeadHitPoint -  ExtendBodyComp->GetComponentLocation()).GetSafeNormal()* BaseImpulse, NAME_None, false);
+			//ReceivedActor->SuperMesh->AddImpulse((HeadHitPoint -  ExtendBodyComp->GetComponentLocation()).GetSafeNormal()* BaseImpulse, NAME_None, false);
 		}
 	}
 }
