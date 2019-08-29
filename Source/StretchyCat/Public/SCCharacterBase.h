@@ -100,5 +100,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = Gameplay)
 	void OnTakeDamage(AActor* DmgFrom);
 
-	void Respawn(FVector GroundLocation);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerRespawn();
+
+	void Respawn(const FVector& _other);
 };

@@ -132,7 +132,7 @@ void ASCStretchyCat::Tick(float DeltaTime)
 		ExtendBodyComp->SetRelativeLocation(RelativeLoc);
 		FVector NewExtent((ExtendBodyCapComp->RelativeLocation.X - GetCapsuleComponent()->GetUnscaledCapsuleRadius()) / 2, 25.f, 25.f);
 		ExtendBodyComp->SetBoxExtent(NewExtent);
-		DrawDebugBox(GetWorld(), ExtendBodyComp->GetComponentLocation(), NewExtent, ExtendBodyComp->GetComponentRotation().Quaternion(),FColor::Yellow);
+		//DrawDebugBox(GetWorld(), ExtendBodyComp->GetComponentLocation(), NewExtent, ExtendBodyComp->GetComponentRotation().Quaternion(),FColor::Yellow);
 
 		PercentToEnd = 1 - (MaxForwardExtendDistance - ExtendBodyCapComp->RelativeLocation.X) / MaxForwardExtendDistance;
 		//UE_LOG(LogTemp, Log, TEXT("Percent: %f"), PercentToEnd);

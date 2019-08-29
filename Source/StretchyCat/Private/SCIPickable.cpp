@@ -56,12 +56,16 @@ void ASCIPickable::ServerCancelInteraction_Implementation()
 void ASCIPickable::MulticastDoInteraction_Implementation(class ASCCharacterBase* ownActor)
 {
 	SuperMesh->SetEnableGravity(false);
+	SuperMesh->SetSimulatePhysics(false);
+
 	UE_LOG(LogTemp, Log, TEXT("Multicast interaction"));
 }
 
 void ASCIPickable::MulticastCancelInteraction_Implementation()
 {
 	SuperMesh->SetEnableGravity(true);
+	SuperMesh->SetSimulatePhysics(true);
+
 	SetReplicateMovement(true);
 }
 

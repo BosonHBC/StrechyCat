@@ -19,6 +19,7 @@
 #include "StretchyCatPlayerController.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Public//EngineUtils.h"
+#include "Kismet/GameplayStatics.h"
 // Sets default values
 ASCCharacterBase::ASCCharacterBase()
 {
@@ -125,11 +126,30 @@ void ASCCharacterBase::TakeDamage(AActor* DmgFrom, int _dmg)
 }
 
 
-void ASCCharacterBase::Respawn(FVector GroundLocation)
+void ASCCharacterBase::ServerRespawn_Implementation()
+{
+	FVector OthersLocation;
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* CtrlBase = Cast<APlayerController>(*Iterator);
+		if (FVector::Dist(GetActorLocation(), CtrlBase->GetPawn()->GetActorLocation()) > 10.f) {
+			OthersLocation = CtrlBase->GetPawn()->GetActorLocation();
+			break;
+		}
+	}
+	Respawn(OthersLocation);
+}
+
+bool ASCCharacterBase::ServerRespawn_Validate()
+{
+	return true;
+}
+
+void ASCCharacterBase::Respawn(const FVector& _other)
 {
 	// Respawn the player in another player's head
 	
-	SetActorLocationAndRotation(GroundLocation + FVector(0, 0, 400.f), FRotator::ZeroRotator, false);
+	SetActorLocationAndRotation(_other + FVector(0, 0, 400.f), FRotator::ZeroRotator, false);
 }
 
 void ASCCharacterBase::Interact()
@@ -182,17 +202,7 @@ void ASCCharacterBase::OnInvinceTimeOver()
 	
 	EnableInput(nullptr);
 
-	// Temp Position
-	FVector OthersLocation;
-	for (TActorIterator<ASCCharacterBase> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-	{
-		ASCCharacterBase *CharBase = *ActorItr;
-		if (!CharBase->IsLocallyControlled()) {
-			OthersLocation = CharBase->GetActorLocation();
-			break;
-		}
-	}
-	Respawn(OthersLocation);
+	ServerRespawn();
 }
 
 void ASCCharacterBase::StartInvincible(AActor* DmgFrom)
