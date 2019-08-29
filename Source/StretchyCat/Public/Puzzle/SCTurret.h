@@ -14,14 +14,14 @@ class STRETCHYCAT_API ASCTurret : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ASCTurret();
-	UPROPERTY(EditDefaultsOnly, Category = Components)
-		class UStaticMeshComponent* MeshComp;
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly)
+		class UCapsuleComponent * CapComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
 		TSubclassOf<class ASCBulletProjectile> ProjectileClass;
 	UPROPERTY(EditAnywhere, Category = Gameplay)
 		bool bCanSpawnProjectile;
-	UPROPERTY(VisibleDefaultsOnly, Category = Gameplay)
+	UPROPERTY(VisibleAnywhere, Category = Gameplay)
 		class USceneComponent* SpawnLocationComp;
 	UPROPERTY(EditAnywhere, Category = Gameplay)
 		float ShootingInterval;

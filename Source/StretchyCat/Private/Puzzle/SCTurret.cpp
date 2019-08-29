@@ -4,18 +4,18 @@
 #include "Engine/World.h"
 #include "Puzzle/SCBulletProjectile.h"
 #include "TimerManager.h"
-#include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Components/SceneComponent.h"
+#include "Components/CapsuleComponent.h"
 // Sets default values
 ASCTurret::ASCTurret()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
-	RootComponent = MeshComp;
-
+	CapComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapComp"));
+	RootComponent = CapComp;
 	SpawnLocationComp = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
-	SpawnLocationComp->SetupAttachment(MeshComp);
+	SpawnLocationComp->SetupAttachment(CapComp);
 
 	ShootingInterval = 0.2f;
 	BulletSpawnLifeTime = 2.f;
@@ -51,7 +51,13 @@ void ASCTurret::MulticastFireProjetile_Implementation()
 
 		// spawn the projectile at the muzzle
 		ASCBulletProjectile* projtile = GetWorld()->SpawnActor<ASCBulletProjectile>(ProjectileClass, SpawnLocation, SpawnLocationComp->GetComponentRotation(), ActorSpawnParams);
-		projtile->InitialLifeSpan = BulletSpawnLifeTime;
+		if (projtile) {
+			projtile->InitialLifeSpan = BulletSpawnLifeTime;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Null projetile ref"));
+		}
 	}
 
 }

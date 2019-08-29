@@ -18,6 +18,7 @@
 
 #include "StretchyCatPlayerController.h"
 #include "Net/UnrealNetwork.h"
+#include "Engine/Public//EngineUtils.h"
 // Sets default values
 ASCCharacterBase::ASCCharacterBase()
 {
@@ -182,7 +183,16 @@ void ASCCharacterBase::OnInvinceTimeOver()
 	EnableInput(nullptr);
 
 	// Temp Position
-	Respawn(FVector(0, 0, 170.f));
+	FVector OthersLocation;
+	for (TActorIterator<ASCCharacterBase> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		ASCCharacterBase *CharBase = *ActorItr;
+		if (!CharBase->IsLocallyControlled()) {
+			OthersLocation = CharBase->GetActorLocation();
+			break;
+		}
+	}
+	Respawn(OthersLocation);
 }
 
 void ASCCharacterBase::StartInvincible(AActor* DmgFrom)
