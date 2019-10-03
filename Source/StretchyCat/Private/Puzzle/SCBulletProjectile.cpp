@@ -59,7 +59,14 @@ void ASCBulletProjectile::OnHit(UPrimitiveComponent* OverlappedComp, AActor* Oth
 			if (Turtle) {
 				if (Turtle->bRotating) {
 					// Deflecting
-
+					if (Turtle->GetViewRotation().Pitch >= 270 && Turtle->GetViewRotation().Pitch < 360)
+					{
+						ProjectileMovement->Velocity = FVector(Turtle->GetActorForwardVector().X, Turtle->GetActorForwardVector().Y, -(Turtle->GetViewRotation().Pitch - 270) / 90) * ProjectileMovement->MaxSpeed;
+					}
+					else
+					{
+						ProjectileMovement->Velocity = FVector(Turtle->GetActorForwardVector().X, Turtle->GetActorForwardVector().Y, Turtle->GetViewRotation().Pitch / 90) * ProjectileMovement->MaxSpeed;
+					}
 				}
 				else {
 					// Damage Turtle
