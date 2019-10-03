@@ -6,6 +6,9 @@
 #include "SCCharacterBase.h"
 #include "SCSpinTurtle.h"
 #include "SCAICharacter.h"
+#include "Sound/SoundCue.h"
+#include "UObject/ConstructorHelpers.h"
+
 // Sets default values
 ASCBulletProjectile::ASCBulletProjectile()
 {
@@ -34,6 +37,15 @@ ASCBulletProjectile::ASCBulletProjectile()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
 
+	//load sound cue
+	static ConstructorHelpers::FObjectFinder<USoundCue> DeflectCueObject(TEXT("SoundCue'/Game/Sound/Turtle/Deflect_Cue.Deflect_Cue'"));
+	if (DeflectCueObject.Succeeded())
+	{
+		DeflectCue = DeflectCueObject.Object;
+		DeflectAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("DeflectAudioComponent"));
+		DeflectAudioComponent->SetupAttachment(RootComponent);
+	}
+
 	// Die after 3 seconds by default
 	InitialLifeSpan = 2.0f;
 
@@ -45,6 +57,11 @@ ASCBulletProjectile::ASCBulletProjectile()
 void ASCBulletProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (DeflectAudioComponent && DeflectCue)
+	{
+		DeflectAudioComponent->SetSound(DeflectCue);
+	}
 
 }
 
@@ -59,6 +76,11 @@ void ASCBulletProjectile::OnHit(UPrimitiveComponent* OverlappedComp, AActor* Oth
 			if (Turtle) {
 				if (Turtle->bRotating) {
 					// Deflecting
+					if (DeflectAudioComponent && DeflectCue)
+					{
+						DeflectAudioComponent->Play(0.0f);
+					}
+
 					if (Turtle->GetViewRotation().Pitch >= 270 && Turtle->GetViewRotation().Pitch < 360)
 					{
 						ProjectileMovement->Velocity = FVector(Turtle->GetActorForwardVector().X, Turtle->GetActorForwardVector().Y, -(Turtle->GetViewRotation().Pitch - 270) / 90) * ProjectileMovement->MaxSpeed;

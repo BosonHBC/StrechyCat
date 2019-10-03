@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Components/AudioComponent.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "SCBulletProjectile.generated.h"
@@ -9,8 +10,7 @@
 UCLASS()
 class STRETCHYCAT_API ASCBulletProjectile : public AActor
 {
-	GENERATED_BODY()
-	
+	GENERATED_BODY()	
 public:	
 	// Sets default values for this actor's properties
 	ASCBulletProjectile();
@@ -19,6 +19,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 		class UProjectileMovementComponent* ProjectileMovement;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* DeflectCue;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -34,4 +38,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void BeforeDestroyEvent(AActor* OtherActor);
+
+private:
+	UAudioComponent* DeflectAudioComponent;
 };
