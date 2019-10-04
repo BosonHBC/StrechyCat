@@ -50,7 +50,7 @@ void ASCAICharacter::Tick(float DeltaTime)
 		detectCD = 0;
 	}
 
-	switch (FMath::RandRange(0, 50))
+	switch (FMath::RandRange(0, 200))
 	{
 	case 1: // code to be executed if n = 1;
 		if (BarkCue)
