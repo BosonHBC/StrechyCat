@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "Components/AudioComponent.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "SCBulletProjectile.generated.h"
@@ -40,5 +39,5 @@ public:
 		void BeforeDestroyEvent(AActor* OtherActor);
 
 private:
-	UAudioComponent* DeflectAudioComponent;
+	class UAudioComponent* DeflectAudioComponent;
 };

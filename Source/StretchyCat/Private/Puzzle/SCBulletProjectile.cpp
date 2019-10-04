@@ -8,6 +8,7 @@
 #include "SCAICharacter.h"
 #include "Sound/SoundCue.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 ASCBulletProjectile::ASCBulletProjectile()

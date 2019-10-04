@@ -23,6 +23,15 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseLookUpRate;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* InteractCue;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* DeathCue;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* DamageCue;
+
 	bool GetCarryingActor() const { return bCarryingActor; }
 	void SetCarryingActor(bool val) { bCarryingActor = val; }
 	USceneComponent* GetInteractionPoint() const { return InteractionPoint; };
@@ -104,4 +113,6 @@ public:
 	void ServerRespawn();
 
 	void Respawn(const FVector& _other);
+
+	class UAudioComponent* AudioComponent;
 };

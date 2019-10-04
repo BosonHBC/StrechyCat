@@ -5,6 +5,8 @@
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Sound/SoundCue.h"
+#include <Kismet\GameplayStatics.h>
 
 // Sets default values
 ASCInteractableBase::ASCInteractableBase()
@@ -67,6 +69,12 @@ bool ASCInteractableBase::ServerCancelInteraction_Validate()
 void ASCInteractableBase::ServerDoInteraction_Implementation(class ASCCharacterBase* ownActor)
 {
 	// Base Interaction
+
+	if (InteractCue)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), InteractCue, GetActorLocation());
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("Interact by %s"), *ownActor->GetName());
 	MulticastDoInteraction(ownActor);
 }

@@ -8,6 +8,11 @@
 #include "Puzzle/SCBulletProjectile.h"
 #include "DrawDebugHelpers.h"
 #include "Net/UnrealNetwork.h"
+#include "Sound/SoundCue.h"
+#include <Kismet\GameplayStatics.h>
+#include "Components/AudioComponent.h"
+#include "SCCharacterBase.h"
+
 ASCSpinTurtle::ASCSpinTurtle()
 {
 	RotateParentComp = CreateDefaultSubobject<USceneComponent>(TEXT("RotateParentComp"));
@@ -20,7 +25,7 @@ ASCSpinTurtle::ASCSpinTurtle()
 	currentRotateRadSpeed = 0.f;
 	RotateRadSpeedDamping = 600.f;
 
-	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ASCSpinTurtle::OnActorHit);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ASCSpinTurtle::OnActorHit);	
 }
 
 void ASCSpinTurtle::ServerUseAbility_Implementation()
@@ -63,6 +68,15 @@ void ASCSpinTurtle::MulticastSetInitialRadSpeed_Implementation()
 	currentRotateRadSpeed = RotateRadSpeed;
 }
 
+void ASCSpinTurtle::BeginPlay()
+{
+	Super::BeginPlay();
+	if (AudioComponent && SpinningCue)
+	{
+		AudioComponent->SetSound(SpinningCue);
+	}
+}
+
 void ASCSpinTurtle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -73,6 +87,14 @@ void ASCSpinTurtle::Tick(float DeltaTime)
 			RotateParentComp->SetRelativeRotation(newRot);
 			newRot.Yaw -= 90.f;
 			GetMesh()->SetRelativeRotation(newRot);
+
+			if (AudioComponent && SpinningCue)
+			{
+				if (!AudioComponent->IsPlaying())
+				{
+					AudioComponent->Play(0.0f);
+				}
+			}
 
 			if (bRecovering) {
 				currentRotateRadSpeed -= RotateRadSpeedDamping * DeltaTime;
@@ -87,6 +109,16 @@ void ASCSpinTurtle::Tick(float DeltaTime)
 
 					}
 					//UE_LOG(LogTemp, Log, TEXT("Yaw: %f"), RotateParentComp->RelativeRotation.Yaw);
+				}
+			}
+		}
+		else
+		{
+			if (AudioComponent && SpinningCue)
+			{
+				if (AudioComponent->IsPlaying())
+				{
+					AudioComponent->Stop();
 				}
 			}
 		}

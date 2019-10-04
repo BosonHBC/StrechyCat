@@ -20,6 +20,9 @@ public:
 	UPROPERTY(Replicated, EditInstanceOnly,Category = Gameplay)
 	bool bOneTimeInteractObj;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* InteractCue;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
