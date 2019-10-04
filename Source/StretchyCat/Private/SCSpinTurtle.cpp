@@ -6,7 +6,6 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Puzzle/SCBulletProjectile.h"
-#include "DrawDebugHelpers.h"
 #include "Net/UnrealNetwork.h"
 #include "Sound/SoundCue.h"
 #include <Kismet\GameplayStatics.h>
@@ -133,7 +132,6 @@ void ASCSpinTurtle::OnActorHit(UPrimitiveComponent* OverlappedComp, AActor* Othe
 	{
 		ASCBulletProjectile* Proj = Cast<ASCBulletProjectile>(OtherActor);
 		if (Proj) {
-			DrawDebugSphere(GetWorld(), SweepResult.ImpactPoint, 16, 8, FColor::Green, false, 1.f);
 			
 		}
 

@@ -3,7 +3,6 @@
 #include "SCStretchyCat.h"
 #include"Components/CapsuleComponent.h"
 #include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
-#include "DrawDebugHelpers.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -61,7 +60,7 @@ void ASCStretchyCat::ServerUseAbility_Implementation()
 		RelativeXLocation = FMath::Min((OutHit.ImpactPoint - Start).Size(), RelativeXLocation);
 		HeadHitActor = OutHit.GetActor();
 		HeadHitPoint = OutHit.ImpactPoint;
-		DrawDebugLine(GetWorld(), Start, Start + Direction * RelativeXLocation, FColor::Red, true);
+		//DrawDebugLine(GetWorld(), Start, Start + Direction * RelativeXLocation, FColor::Red, true);
 	}
 	bBodyOutside = true;
 

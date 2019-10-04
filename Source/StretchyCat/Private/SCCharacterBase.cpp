@@ -5,7 +5,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StretchyCatPlayerController.h"
-#include "DrawDebugHelpers.h"
 #include "Engine/World.h"
 #include "SCGameState.h"
 #include "Components/SceneComponent.h"
@@ -231,7 +230,7 @@ void ASCCharacterBase::StartInvincible(AActor* DmgFrom)
 void ASCCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	DrawDebugSphere(GetWorld(), InteractionPoint->GetComponentLocation(), 16, 8, FColor::Orange, false);
+	//DrawDebugSphere(GetWorld(), InteractionPoint->GetComponentLocation(), 16, 8, FColor::Orange, false);
 
 	FHitResult OutHit;
 	FVector Start = InteractionPoint->GetComponentLocation();
