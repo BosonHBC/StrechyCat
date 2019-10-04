@@ -8,8 +8,11 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Sound/SoundCue.h"
+#include <Kismet\GameplayStatics.h>
 #include "SCInteractableBase.h"
 #include "Net/UnrealNetwork.h"
+
 
 ASCStretchyCat::ASCStretchyCat() {
 
@@ -43,6 +46,11 @@ ASCStretchyCat::ASCStretchyCat() {
 
 void ASCStretchyCat::ServerUseAbility_Implementation()
 {
+
+	if (StretchCue)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), StretchCue, GetActorLocation());
+	}
 
 	FHitResult OutHit;
 	FVector Start = ExtendBodyCapComp->GetComponentLocation();

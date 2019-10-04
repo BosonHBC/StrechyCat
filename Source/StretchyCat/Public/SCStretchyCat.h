@@ -34,6 +34,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 		float BaseImpulse;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* StretchCue;
 private:
 	FVector BodyLandedLcation;
 

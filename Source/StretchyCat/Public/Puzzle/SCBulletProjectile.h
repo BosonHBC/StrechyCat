@@ -37,7 +37,4 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void BeforeDestroyEvent(AActor* OtherActor);
-
-private:
-	class UAudioComponent* DeflectAudioComponent;
 };
