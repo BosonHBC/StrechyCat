@@ -25,6 +25,9 @@ public:
 		class USceneComponent* SpawnLocationComp;
 	UPROPERTY(EditAnywhere, Category = Gameplay)
 		float ShootingInterval;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* ShootCue;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -6,6 +6,9 @@
 #include "SCCharacterBase.h"
 #include "SCSpinTurtle.h"
 #include "SCAICharacter.h"
+#include "Sound/SoundCue.h"
+#include <Kismet\GameplayStatics.h>
+
 // Sets default values
 ASCBulletProjectile::ASCBulletProjectile()
 {
@@ -45,7 +48,6 @@ ASCBulletProjectile::ASCBulletProjectile()
 void ASCBulletProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void ASCBulletProjectile::OnHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -59,7 +61,19 @@ void ASCBulletProjectile::OnHit(UPrimitiveComponent* OverlappedComp, AActor* Oth
 			if (Turtle) {
 				if (Turtle->bRotating) {
 					// Deflecting
+					if (DeflectCue)
+					{
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), DeflectCue, GetActorLocation());
+					}
 
+					if (Turtle->GetViewRotation().Pitch >= 270 && Turtle->GetViewRotation().Pitch < 360)
+					{
+						ProjectileMovement->Velocity = FVector(Turtle->GetActorForwardVector().X, Turtle->GetActorForwardVector().Y, -(Turtle->GetViewRotation().Pitch - 270) / 90) * ProjectileMovement->MaxSpeed;
+					}
+					else
+					{
+						ProjectileMovement->Velocity = FVector(Turtle->GetActorForwardVector().X, Turtle->GetActorForwardVector().Y, Turtle->GetViewRotation().Pitch / 90) * ProjectileMovement->MaxSpeed;
+					}
 				}
 				else {
 					// Damage Turtle

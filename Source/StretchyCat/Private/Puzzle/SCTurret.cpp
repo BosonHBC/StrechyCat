@@ -7,6 +7,9 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Sound/SoundCue.h"
+#include <Kismet\GameplayStatics.h>
+
 // Sets default values
 ASCTurret::ASCTurret()
 {
@@ -48,6 +51,11 @@ void ASCTurret::MulticastFireProjetile_Implementation()
 		//Set Spawn Collision Handling Override
 		FActorSpawnParameters ActorSpawnParams;
 		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+		if (ShootCue)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ShootCue, GetActorLocation());
+		}
 
 		// spawn the projectile at the muzzle
 		ASCBulletProjectile* projtile = GetWorld()->SpawnActor<ASCBulletProjectile>(ProjectileClass, SpawnLocation, SpawnLocationComp->GetComponentRotation(), ActorSpawnParams);

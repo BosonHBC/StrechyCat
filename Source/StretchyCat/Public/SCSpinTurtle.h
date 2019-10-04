@@ -15,6 +15,10 @@ class STRETCHYCAT_API ASCSpinTurtle : public ASCCharacterBase
 	GENERATED_BODY()
 public:
 	ASCSpinTurtle();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* SpinningCue;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components)
 		class USceneComponent* RotateParentComp;
 
@@ -37,6 +41,8 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 		void MulticastSetInitialRadSpeed();
+
+	virtual void BeginPlay() override;
 public:
 
 	virtual void Tick(float DeltaTime) override;
@@ -58,6 +64,4 @@ public:
 		void OnActorHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	FORCEINLINE bool GetRecovering() const { return bRecovering; }
-
-
 };

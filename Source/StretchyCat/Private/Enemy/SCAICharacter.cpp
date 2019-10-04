@@ -6,6 +6,8 @@
 #include "AIModule/Classes/AIController.h"
 #include "Components/SphereComponent.h"
 #include "SCCharacterBase.h"
+#include "Sound/SoundCue.h"
+#include <Kismet\GameplayStatics.h>
 // Sets default values
 ASCAICharacter::ASCAICharacter()
 {
@@ -46,6 +48,18 @@ void ASCAICharacter::Tick(float DeltaTime)
 	else
 	{
 		detectCD = 0;
+	}
+
+	switch (FMath::RandRange(0, 200))
+	{
+	case 1: // code to be executed if n = 1;
+		if (BarkCue)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), BarkCue, GetActorLocation());
+		}
+		break;
+		default: // code to be executed if n doesn't match any cases
+		break;
 	}
 }
 

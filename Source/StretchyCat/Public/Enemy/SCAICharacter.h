@@ -11,6 +11,9 @@ class STRETCHYCAT_API ASCAICharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* BarkCue;
+
 public:
 	// Sets default values for this character's properties
 	ASCAICharacter();

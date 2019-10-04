@@ -13,9 +13,10 @@
 #include "StretchyCatGameMode.h"
 #include "TimerManager.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/AudioComponent.h"
 #include "Materials/Material.h"
 #include "Materials/MaterialInstance.h"
-
+#include "Sound/SoundCue.h"
 #include "StretchyCatPlayerController.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Public//EngineUtils.h"
@@ -56,6 +57,9 @@ ASCCharacterBase::ASCCharacterBase()
 
 	SetReplicates(true);
 	SetReplicateMovement(true);
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	AudioComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -120,6 +124,7 @@ void ASCCharacterBase::TakeDamage(AActor* DmgFrom, int _dmg)
 			scGM->GetDamage(_dmg);
 		}
 		UE_LOG(LogTemp, Log, TEXT("%s is attacking by %s"), *GetName(), *DmgFrom->GetName());
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), DamageCue, GetActorLocation());
 		StartInvincible(DmgFrom);
 		OnTakeDamage(DmgFrom);
 	}
@@ -148,12 +153,16 @@ bool ASCCharacterBase::ServerRespawn_Validate()
 void ASCCharacterBase::Respawn(const FVector& _other)
 {
 	// Respawn the player in another player's head
-	
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), DeathCue, GetActorLocation());
 	SetActorLocationAndRotation(_other + FVector(0, 0, 400.f), FRotator::ZeroRotator, false);
 }
 
 void ASCCharacterBase::Interact()
 {
+	if (InteractCue)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), InteractCue, GetActorLocation());
+	}
 	ServerInteract();
 }
 
