@@ -95,9 +95,10 @@ void ASCBulletProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor
 
 			if (AIBase) {
 				AIBase->KillMyself();
+				BeforeDestroyEvent(OtherActor);
+				Destroy();
 			}
-			BeforeDestroyEvent(OtherActor);
-			Destroy();
+
 		}
 	}
 }
