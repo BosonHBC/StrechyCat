@@ -70,6 +70,7 @@ void ABaseRoom::EnterTheRoom(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 		ASCCharacterBase* character = Cast<ASCCharacterBase>(OtherActor);
 		if (character != nullptr)
 		{
+			character->SpawnLocation = RoomSpawn->GetComponentLocation();
 			auto pc = character->GetController<ASCBaseController>();
 			if (pc)
 			{

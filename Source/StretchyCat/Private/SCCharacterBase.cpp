@@ -132,7 +132,7 @@ void ASCCharacterBase::TakeDamage(AActor* DmgFrom, int _dmg)
 
 void ASCCharacterBase::ServerRespawn_Implementation()
 {
-	FVector OthersLocation;
+	FVector OthersLocation = FVector::ZeroVector;
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 	{
 		APlayerController* CtrlBase = Cast<APlayerController>(*Iterator);
@@ -141,6 +141,8 @@ void ASCCharacterBase::ServerRespawn_Implementation()
 			break;
 		}
 	}
+	if (OthersLocation == FVector::ZeroVector)
+		OthersLocation = SpawnLocation;
 	Respawn(OthersLocation);
 }
 

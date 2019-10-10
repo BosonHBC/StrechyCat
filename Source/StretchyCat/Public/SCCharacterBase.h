@@ -36,6 +36,7 @@ public:
 	void SetCarryingActor(bool val) { bCarryingActor = val; }
 	USceneComponent* GetInteractionPoint() const { return InteractionPoint; };
 	bool Invincible() const { return bInvincible; }
+	FVector SpawnLocation;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
